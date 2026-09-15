@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J7 Pro Ultimate Snake - Skor Takipli</title>
+    <title>Ultimate Snake - Skor Takipli</title>
+    
+    <!-- PWA & Gerçek Uygulama Modu Ayarları -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0b0f19">
+    
     <style>
         body {
             background-color: #0b0f19;
@@ -84,7 +90,7 @@
 
     <!-- BAŞLANGIÇ VE SEÇİM EKRANI -->
     <div id="menu-ekrani">
-        <h1>J7 PRO ULTIMATE SNAKE</h1>
+        <h1>ULTIMATE SNAKE</h1>
         <p>Stratejini Seç ve Oyuna Başla!</p>
         
         <div class="secim-kutusu">
@@ -111,7 +117,7 @@
         <div id="rekor-bilgi">En Yüksek Skor: <span id="menu-en-yuksek">0</span></div>
     </div>
 
-    <h1>J7 PRO ULTIMATE SNAKE V7</h1>
+    <h1>ULTIMATE SNAKE</h1>
     <div id="panel">
         Skor: <span id="skor">0</span> | En Yüksek: <span id="en-yuksek-skor">0</span><br>
         Aktif Yem: <span id="aktif-yem-adi">-</span> | Renk: <span id="aktif-renk-adi">-</span>
@@ -142,11 +148,10 @@
         let yon = "SAG";
         let sonrakiYon = "SAG";
         let skor = 0;
-        let enYuksekSkor = localStorage.getItem("j7_snake_en_yuksek") || 0;
+        let enYuksekSkor = localStorage.getItem("ultimate_snake_en_yuksek") || 0;
         let oyunAktif = false;
         let oyunDongusu;
 
-        // Sayfa açıldığında kayıtlı rekoru yazdır
         document.getElementById("menu-en-yuksek").innerText = enYuksekSkor;
         document.getElementById("en-yuksek-skor").innerText = enYuksekSkor;
 
@@ -260,11 +265,10 @@
                 oyunAktif = false;
                 clearInterval(oyunDongusu);
                 
-                // Rekor kontrolü ve kaydetme
                 let yeniRekorMesaji = "";
                 if (skor > enYuksekSkor) {
                     enYuksekSkor = skor;
-                    localStorage.setItem("j7_snake_en_yuksek", enYuksekSkor);
+                    localStorage.setItem("ultimate_snake_en_yuksek", enYuksekSkor);
                     yeniRekorMesaji = "\n🏆 TEBRİKLER! Yeni En Yüksek Rekor!";
                 }
 
@@ -277,10 +281,9 @@
                 skor += yem.tip.puan;
                 document.getElementById("skor").innerText = skor;
                 
-                // Anlık rekor geçildiyse panelde de güncellensin
                 if (skor > enYuksekSkor) {
                     enYuksekSkor = skor;
-                    localStorage.setItem("j7_snake_en_yuksek", enYuksekSkor);
+                    localStorage.setItem("ultimate_snake_en_yuksek", enYuksekSkor);
                     document.getElementById("en-yuksek-skor").innerText = enYuksekSkor;
                 }
 
