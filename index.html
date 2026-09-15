@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J7 Pro Ultimate Snake - Skor Takipli</title>
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #00ffcc;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+            margin: 0;
+            padding: 10px;
+        }
+        h1 { font-size: 18px; margin: 5px 0; color: #ff3366; text-shadow: 0 0 10px #ff3366; }
+        #panel { font-size: 13px; margin-bottom: 8px; line-height: 1.4; }
+        #menu-ekrani {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(11, 15, 25, 0.96);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+        .secim-kutusu { margin: 10px 0; }
+        select, .basla-btn {
+            background-color: #1f2937;
+            color: #00ffcc;
+            border: 2px solid #00ffcc;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .basla-btn:hover { background-color: #00ffcc; color: #0b0f19; }
+        canvas {
+            background-color: #111827;
+            border: 3px solid #00ffcc;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .menu-butonlari { margin: 5px 0; }
+        .menu-butonlari button {
+            background-color: #1f2937;
+            color: #fff;
+            border: 1px solid #00ffcc;
+            padding: 4px 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        .kontroller {
+            margin-top: 8px;
+            display: grid;
+            grid-template-columns: repeat(3, 50px);
+            gap: 4px;
+            justify-content: center;
+        }
+        button.yon-btn {
+            background-color: #1f2937;
+            color: #00ffcc;
+            border: 2px solid #00ffcc;
+            padding: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        button.yon-btn:active { background-color: #00ffcc; color: #0b0f19; }
+        #rekor-bilgi {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #eab308;
+            text-shadow: 0 0 5px rgba(234, 179, 8, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BAŞLANGIÇ VE SEÇİM EKRANI -->
+    <div id="menu-ekrani">
+        <h1>J7 PRO ULTIMATE SNAKE</h1>
+        <p>Stratejini Seç ve Oyuna Başla!</p>
+        
+        <div class="secim-kutusu">
+            <label>Yılan Rengi:</label><br>
+            <select id="secim-renk">
+                <option value="0">Neon Yeşil</option>
+                <option value="1">Cyber Mor</option>
+                <option value="2">Turuncu Alev</option>
+            </select>
+        </div>
+
+        <div class="secim-kutusu">
+            <label>İlk Başlangıç Yemi:</label><br>
+            <select id="secim-yem">
+                <option value="0">Kırmızı Elma (1)</option>
+                <option value="1">Kahverengi Çikolata (2)</option>
+                <option value="2">Sarı Muz (3)</option>
+                <option value="3">Pembe Çilek (4)</option>
+                <option value="4">Dörtlü Özel El (5)</option>
+            </select>
+        </div>
+
+        <button class="basla-btn" onclick="oyunuBaslatWeb()">OYUNA BAŞLA</button>
+        <div id="rekor-bilgi">En Yüksek Skor: <span id="menu-en-yuksek">0</span></div>
+    </div>
+
+    <h1>J7 PRO ULTIMATE SNAKE V7</h1>
+    <div id="panel">
+        Skor: <span id="skor">0</span> | En Yüksek: <span id="en-yuksek-skor">0</span><br>
+        Aktif Yem: <span id="aktif-yem-adi">-</span> | Renk: <span id="aktif-renk-adi">-</span>
+    </div>
+
+    <div class="menu-butonlari">
+        <button onclick="menuyeDon()">Menüye Dön / Yeniden Seç</button>
+    </div>
+
+    <canvas id="oyunAlani" width="400" height="400"></canvas>
+    
+    <div class="kontroller">
+        <div></div>
+        <button class="yon-btn" onclick="yonDegistir('YUKARI')">⬆️</button>
+        <div></div>
+        <button class="yon-btn" onclick="yonDegistir('SOL')">⬅️</button>
+        <button class="yon-btn" onclick="yonDegistir('ASAGI')">⬇️</button>
+        <button class="yon-btn" onclick="yonDegistir('SAG')">➡️</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("oyunAlani");
+        const ctx = canvas.getContext("2d");
+        const birim = 20;
+        const kareSayisi = canvas.width / birim;
+
+        let yilan = [];
+        let yon = "SAG";
+        let sonrakiYon = "SAG";
+        let skor = 0;
+        let enYuksekSkor = localStorage.getItem("j7_snake_en_yuksek") || 0;
+        let oyunAktif = false;
+        let oyunDongusu;
+
+        // Sayfa açıldığında kayıtlı rekoru yazdır
+        document.getElementById("menu-en-yuksek").innerText = enYuksekSkor;
+        document.getElementById("en-yuksek-skor").innerText = enYuksekSkor;
+
+        const yilanRenkleri = [
+            { ad: "Neon Yeşil", kafa: "#00ffcc", govde: "#008866" },
+            { ad: "Cyber Mor", kafa: "#d946ef", govde: "#9333ea" },
+            { ad: "Turuncu Alev", kafa: "#f97316", govde: "#c2410c" }
+        ];
+        let renkIndeks = 0;
+
+        const yemTurleri = [
+            { ad: "Kırmızı Elma (1)", renk: "#ef4444", puan: 10 },
+            { ad: "Kahverengi Çikolata (2)", renk: "#b45309", puan: 20 },
+            { ad: "Sarı Muz (3)", renk: "#eab308", puan: 30 },
+            { ad: "Pembe Çilek (4)", renk: "#ec4899", puan: 40 },
+            { ad: "Dörtlü Özel El (5)", renk: "#8b5cf6", puan: 50 }
+        ];
+        let mevcutYemIndeks = 0;
+        let yem = { x: 0, y: 0, tip: yemTurleri[0] };
+
+        document.addEventListener("keydown", tusKontrol);
+
+        function tusKontrol(olay) {
+            if (!oyunAktif) return;
+            if ((olay.key === "ArrowUp" || olay.key === "w") && yon !== "ASAGI") sonrakiYon = "YUKARI";
+            else if ((olay.key === "ArrowDown" || olay.key === "s") && yon !== "YUKARI") sonrakiYon = "ASAGI";
+            else if ((olay.key === "ArrowLeft" || olay.key === "a") && yon !== "SAG") sonrakiYon = "SOL";
+            else if ((olay.key === "ArrowRight" || olay.key === "d") && yon !== "SOL") sonrakiYon = "SAG";
+        }
+
+        function yonDegistir(yeniYon) {
+            if (!oyunAktif) return;
+            if (yeniYon === "YUKARI" && yon !== "ASAGI") sonrakiYon = "YUKARI";
+            if (yeniYon === "ASAGI" && yon !== "YUKARI") sonrakiYon = "ASAGI";
+            if (yeniYon === "SOL" && yon !== "SAG") sonrakiYon = "SOL";
+            if (yeniYon === "SAG" && yon !== "SOL") sonrakiYon = "SAG";
+        }
+
+        function oyunuBaslatWeb() {
+            renkIndeks = parseInt(document.getElementById("secim-renk").value);
+            mevcutYemIndeks = parseInt(document.getElementById("secim-yem").value);
+
+            document.getElementById("aktif-renk-adi").innerText = yilanRenkleri[renkIndeks].ad;
+            document.getElementById("menu-ekrani").style.display = "none";
+
+            yilan = [
+                { x: 10 * birim, y: 10 * birim },
+                { x: 9 * birim, y: 10 * birim },
+                { x: 8 * birim, y: 10 * birim }
+            ];
+            yon = "SAG";
+            sonrakiYon = "SAG";
+            skor = 0;
+            document.getElementById("skor").innerText = skor;
+            document.getElementById("en-yuksek-skor").innerText = enYuksekSkor;
+            oyunAktif = true;
+
+            rastgeleYemUretVerilenIndeksde(mevcutYemIndeks);
+            clearInterval(oyunDongusu);
+            oyunDongusu = setInterval(anaDongu, 110);
+        }
+
+        function menuyeDon() {
+            oyunAktif = false;
+            clearInterval(oyunDongusu);
+            document.getElementById("menu-en-yuksek").innerText = enYuksekSkor;
+            document.getElementById("menu-ekrani").style.display = "flex";
+        }
+
+        function rastgeleYemUretVerilenIndeksde(indeks) {
+            mevcutYemIndeks = indeks;
+            let secilenTip = yemTurleri[mevcutYemIndeks];
+            yem = {
+                x: Math.floor(Math.random() * kareSayisi) * birim,
+                y: Math.floor(Math.random() * kareSayisi) * birim,
+                tip: secilenTip
+            };
+            document.getElementById("aktif-yem-adi").innerText = yem.tip.ad;
+        }
+
+        function siradakiYemiUret() {
+            mevcutYemIndeks = (mevcutYemIndeks + 1) % yemTurleri.length;
+            let secilenTip = yemTurleri[mevcutYemIndeks];
+            yem = {
+                x: Math.floor(Math.random() * kareSayisi) * birim,
+                y: Math.floor(Math.random() * kareSayisi) * birim,
+                tip: secilenTip
+            };
+            document.getElementById("aktif-yem-adi").innerText = yem.tip.ad;
+        }
+
+        function oyunGuncelle() {
+            if (!oyunAktif) return;
+            yon = sonrakiYon;
+            let kafaX = yilan[0].x;
+            let kafaY = yilan[0].y;
+
+            if (yon === "YUKARI") kafaY -= birim;
+            if (yon === "ASAGI") kafaY += birim;
+            if (yon === "SOL") kafaX -= birim;
+            if (yon === "SAG") kafaX += birim;
+
+            if (kafaX < 0) kafaX = canvas.width - birim;
+            if (kafaX >= canvas.width) kafaX = 0;
+            if (kafaY < 0) kafaY = canvas.height - birim;
+            if (kafaY >= canvas.height) kafaY = 0;
+
+            let yeniKafa = { x: kafaX, y: kafaY };
+
+            if (kuyrukCarpismaKontrol(kafaX, kafaY)) {
+                oyunAktif = false;
+                clearInterval(oyunDongusu);
+                
+                // Rekor kontrolü ve kaydetme
+                let yeniRekorMesaji = "";
+                if (skor > enYuksekSkor) {
+                    enYuksekSkor = skor;
+                    localStorage.setItem("j7_snake_en_yuksek", enYuksekSkor);
+                    yeniRekorMesaji = "\n🏆 TEBRİKLER! Yeni En Yüksek Rekor!";
+                }
+
+                alert("FATAL ERROR: Kuyruğunu ısırdın!\nSkorun: " + skor + yeniRekorMesaji);
+                menuyeDon();
+                return;
+            }
+
+            if (kafaX === yem.x && kafaY === yem.y) {
+                skor += yem.tip.puan;
+                document.getElementById("skor").innerText = skor;
+                
+                // Anlık rekor geçildiyse panelde de güncellensin
+                if (skor > enYuksekSkor) {
+                    enYuksekSkor = skor;
+                    localStorage.setItem("j7_snake_en_yuksek", enYuksekSkor);
+                    document.getElementById("en-yuksek-skor").innerText = enYuksekSkor;
+                }
+
+                siradakiYemiUret();
+            } else {
+                yilan.pop();
+            }
+
+            yilan.unshift(yeniKafa);
+        }
+
+        function kuyrukCarpismaKontrol(x, y) {
+            for (let i = 1; i < yilan.length; i++) {
+                if (yilan[i].x === x && yilan[i].y === y) return true;
+            }
+            return false;
+        }
+
+        function cizimYap() {
+            ctx.fillStyle = "#111827";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            let aktifTema = yilanRenkleri[renkIndeks];
+            for (let i = 0; i < yilan.length; i++) {
+                ctx.fillStyle = i === 0 ? aktifTema.kafa : aktifTema.govde;
+                ctx.fillRect(yilan[i].x, yilan[i].y, birim - 2, birim - 2);
+            }
+
+            ctx.fillStyle = yem.tip.renk;
+            ctx.fillRect(yem.x, yem.y, birim - 2, birim - 2);
+        }
+
+        function anaDongu() {
+            if (!oyunAktif) return;
+            oyunGuncelle();
+            cizimYap();
+        }
+    </script>
+</body>
+</html>
