@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+²<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
@@ -505,3 +505,22 @@
             align-items: center;
         }
         button.yon-btn:active { background-color: #00ffcc; color: #0b0f19; }
+        // 1. Klavye tuş kontrolü (WASD ve Ok Tuşları)
+        document.addEventListener("keydown", tusKontrol);
+
+        function tusKontrol(olay) {
+            if (!oyunAktif) return;
+            if ((olay.key === "ArrowUp" || olay.key === "w" || olay.key === "W") && yon !== "ASAGI") sonrakiYon = "YUKARI";
+            else if ((olay.key === "ArrowDown" || olay.key === "s" || olay.key === "S") && yon !== "YUKARI") sonrakiYon = "ASAGI";
+            else if ((olay.key === "ArrowLeft" || olay.key === "a" || olay.key === "A") && yon !== "SAG") sonrakiYon = "SOL";
+            else if ((olay.key === "ArrowRight" || olay.key === "d" || olay.key === "D") && yon !== "SOL") sonrakiYon = "SAG";
+        }
+
+        // 2. Ekrana eklediğimiz 4'lü butonların tetiklediği yön değiştirme fonksiyonu
+        function yonDegistir(yeniYon) {
+            if (!oyunAktif) return;
+            if (yeniYon === "YUKARI" && yon !== "ASAGI") sonrakiYon = "YUKARI";
+            if (yeniYon === "ASAGI" && yon !== "YUKARI") sonrakiYon = "ASAGI";
+            if (yeniYon === "SOL" && yon !== "SAG") sonrakiYon = "SOL";
+            if (yeniYon === "SAG" && yon !== "SOL") sonrakiYon = "SAG";
+        }
