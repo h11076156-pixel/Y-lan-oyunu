@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ultimate Snake - Nihai Sürüm + Ses Efektleri</title>
     
-    <!-- PWA & Gerçek Uygulama Modu Ayarları -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#0b0f19">
@@ -65,25 +64,34 @@
             border-radius: 4px;
             font-size: 11px;
         }
+        
+        /* DÜZGÜN 4'LÜ KONTROL DÜZENİ */
         .kontroller {
-            margin-top: 8px;
-            display: grid;
-            grid-template-columns: repeat(3, 50px);
-            gap: 4px;
-            justify-content: center;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .orta-yonler {
+            display: flex;
+            gap: 40px;
         }
         button.yon-btn {
             background-color: #1f2937;
             color: #00ffcc;
             border: 2px solid #00ffcc;
-            padding: 10px;
-            font-size: 14px;
+            width: 55px;
+            height: 45px;
+            font-size: 16px;
             cursor: pointer;
             border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         button.yon-btn:active { background-color: #00ffcc; color: #0b0f19; }
         
-        /* BEYAZ SKOR TABLOSU ALANI */
         #skor-tablosu-kutu {
             background-color: #ffffff;
             color: #111827;
@@ -121,7 +129,6 @@
 </head>
 <body>
 
-    <!-- BAŞLANGIÇ VE SEÇİM EKRANI -->
     <div id="menu-ekrani">
         <h1>ULTIMATE SNAKE</h1>
         <p style="margin: 3px 0 8px 0; font-size: 12px;">Stratejini Seç ve Oyuna Başla!</p>
@@ -155,12 +162,9 @@
 
         <button class="basla-btn" onclick="oyunuBaslatWeb()">OYUNA BAŞLA</button>
 
-        <!-- BEYAZ SKOR TABLOSU -->
         <div id="skor-tablosu-kutu">
             <h3>🏆 Skorbord (Şöhretler)</h3>
-            <ul id="skor-listesi">
-                <!-- Skorlar buraya dinamik dolacak -->
-            </ul>
+            <ul id="skor-listesi"></ul>
         </div>
     </div>
 
@@ -176,13 +180,14 @@
 
     <canvas id="oyunAlani" width="400" height="400"></canvas>
     
+    <!-- 4'LÜ DÜZGÜN KONTROL PANELİ -->
     <div class="kontroller">
-        <div></div>
         <button class="yon-btn" onclick="yonDegistir('YUKARI')">⬆️</button>
-        <div></div>
-        <button class="yon-btn" onclick="yonDegistir('SOL')">⬅️</button>
+        <div class="orta-yonler">
+            <button class="yon-btn" onclick="yonDegistir('SOL')">⬅️</button>
+            <button class="yon-btn" onclick="yonDegistir('SAG')">➡️</button>
+        </div>
         <button class="yon-btn" onclick="yonDegistir('ASAGI')">⬇️</button>
-        <button class="yon-btn" onclick="yonDegistir('SAG')">➡️</button>
     </div>
 
     <script>
@@ -198,7 +203,6 @@
         let oyunAktif = false;
         let oyunDongusu;
 
-        // Web Audio API ile Ses Üreteci
         let sesCtx = null;
         function sesCal(tip) {
             try {
@@ -229,9 +233,7 @@
                     osc.start(simdi);
                     osc.stop(simdi + 0.3);
                 }
-            } catch (e) {
-                // Tarayıcı ses politikası hatası olursa oyun kesilmez
-            }
+            } catch (e) {}
         }
 
         let skorTablosu = JSON.parse(localStorage.getItem("ultimate_snake_skorlar")) || [];
@@ -255,7 +257,6 @@
             });
         }
 
-        // 5 Farklı Renk Seçeneği
         const yilanRenkleri = [
             { ad: "Neon Yeşil", kafa: "#00ffcc", govde: "#008866", dil: "#00ffff" },
             { ad: "Cyber Mor", kafa: "#d946ef", govde: "#9333ea", dil: "#f472b6" },
@@ -294,7 +295,7 @@
         }
 
         function oyunuBaslatWeb() {
-            clearInterval(oyunDongusu); // Önceki döngüyü tamamen temizle
+            clearInterval(oyunDongusu);
             
             renkIndeks = parseInt(document.getElementById("secim-renk").value);
             mevcutYemIndeks = parseInt(document.getElementById("secim-yem").value);
@@ -302,7 +303,6 @@
             document.getElementById("aktif-renk-adi").innerText = yilanRenkleri[renkIndeks].ad;
             document.getElementById("menu-ekrani").style.display = "none";
 
-            // Yılanı ve skoru her başlangıçta kesin olarak sıfırla
             yilan = [
                 { x: 10 * birim, y: 10 * birim },
                 { x: 9 * birim, y: 10 * birim },
@@ -376,12 +376,13 @@
                 sesCal("olum");
                 
                 let oyuncuIsmi = document.getElementById("oyuncu-adi").value.trim() || "İsimsiz";
+                let normalizeIsim = oyuncuIsmi.toLowerCase();
+                let mevcutKayit = skorTablosu.find(k => k.isim.trim().toLowerCase() === normalizeIsim);
                 
-                // Aynı isim varsa skoru güncelle, yoksa yeni kayıt ekle
-                let mevcutKayit = skorTablosu.find(k => k.isim.toLowerCase() === oyuncuIsmi.toLowerCase());
                 if (mevcutKayit) {
                     if (skor > mevcutKayit.puan) {
                         mevcutKayit.puan = skor;
+                        mevcutKayit.isim = oyuncuIsmi;
                     }
                 } else {
                     skorTablosu.push({ isim: oyuncuIsmi, puan: skor });
@@ -451,44 +452,22 @@
     </script>
 </body>
 </html>
-                let oyuncuIsmi = document.getElementById("oyuncu-adi").value.trim() || "İsimsiz";
-                
-                // Büyük/küçük harf ve boşlukları tamamen normalize ederek kontrol et
-                let normalizeIsim = oyuncuIsmi.toLowerCase();
-                let mevcutKayit = skorTablosu.find(k => k.isim.trim().toLowerCase() === normalizeIsim);
-                
-                if (mevcutKayit) {
-                    // Eğer aynı isim varsa, sadece yeni skor daha yüksekse güncelle
-                    if (skor > mevcutKayit.puan) {
-                        mevcutKayit.puan = skor;
-                        mevcutKayit.isim = oyuncuIsmi; // Orijinal şık yazılışını koru
-                    }
-                } else {
-                    skorTablosu.push({ isim: oyuncuIsmi, puan: skor });
-                }
-
-                localStorage.setItem("ultimate_snake_skorlar", JSON.stringify(skorTablosu));
-                skorTablosuGuncelle(); // Listeyi anında tazele
-                            if (kuyrukCarpismaKontrol(kafaX, kafaY)) {
+                  if (kuyrukCarpismaKontrol(kafaX, kafaY)) {
                 oyunAktif = false;
                 clearInterval(oyunDongusu);
                 
                 sesCal("olum");
                 
                 let oyuncuIsmi = document.getElementById("oyuncu-adi").value.trim() || "İsimsiz";
-                
-                // TÜM OYUNCULAR İÇİN: Girilen ismin aynısı (büyük/küçük harf duyarsız) tabloda var mı kontrol et
                 let normalizeIsim = oyuncuIsmi.toLowerCase();
                 let mevcutKayit = skorTablosu.find(k => k.isim.trim().toLowerCase() === normalizeIsim);
                 
                 if (mevcutKayit) {
-                    // Eğer bu isim daha önce kaydedilmişse, yeni yapılan skor eskisinden yüksekse güncelle
                     if (skor > mevcutKayit.puan) {
-                        mevcurKayit.puan = skor; // Dikkat: mevcutKayit yazarken harf hatası olmasın
-                        mevcutKayit.isim = oyuncuIsmi; 
+                        mevcutKayit.puan = skor;
+                        mevcutKayit.isim = oyuncuIsmi;
                     }
                 } else {
-                    // Tabloda hiç yoksa yepyeni bir kayıt olarak ekle
                     skorTablosu.push({ isim: oyuncuIsmi, puan: skor });
                 }
 
@@ -500,3 +479,29 @@
                 }, 100);
                 return;
             }
+        /* DÜZGÜN 4'LÜ KONTROL DÜZENİ (CSS) */
+        .kontroller {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .orta-yonler {
+            display: flex;
+            gap: 40px;
+        }
+        button.yon-btn {
+            background-color: #1f2937;
+            color: #00ffcc;
+            border: 2px solid #00ffcc;
+            width: 55px;
+            height: 45px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        button.yon-btn:active { background-color: #00ffcc; color: #0b0f19; }
