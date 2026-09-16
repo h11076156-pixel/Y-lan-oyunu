@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Snake - Nihai Sürüm</title>
+    <title>Ultimate Snake - Nihai Sürüm + Ses Efektleri</title>
     
     <!-- PWA & Gerçek Uygulama Modu Ayarları -->
     <meta name="mobile-web-app-capable" content="yes">
@@ -198,6 +198,42 @@
         let oyunAktif = false;
         let oyunDongusu;
 
+        // Web Audio API ile Ses Üreteci
+        let sesCtx = null;
+        function sesCal(tip) {
+            try {
+                if (!sesCtx) {
+                    sesCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                let osc = sesCtx.createOscillator();
+                let gain = sesCtx.createGain();
+                osc.connect(gain);
+                gain.connect(sesCtx.destination);
+
+                let simdi = sesCtx.currentTime;
+
+                if (tip === "yem") {
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(400, simdi);
+                    osc.frequency.exponentialRampToValueAtTime(800, simdi + 0.1);
+                    gain.gain.setValueAtTime(0.15, simdi);
+                    gain.gain.exponentialRampToValueAtTime(0.01, simdi + 0.1);
+                    osc.start(simdi);
+                    osc.stop(simdi + 0.1);
+                } else if (tip === "olum") {
+                    osc.type = "sawtooth";
+                    osc.frequency.setValueAtTime(150, simdi);
+                    osc.frequency.linearRampToValueAtTime(40, simdi + 0.3);
+                    gain.gain.setValueAtTime(0.3, simdi);
+                    gain.gain.exponentialRampToValueAtTime(0.01, simdi + 0.3);
+                    osc.start(simdi);
+                    osc.stop(simdi + 0.3);
+                }
+            } catch (e) {
+                // Tarayıcı ses politikası hatası olursa oyun kesilmez
+            }
+        }
+
         let skorTablosu = JSON.parse(localStorage.getItem("ultimate_snake_skorlar")) || [];
         skorTablosuGuncelle();
 
@@ -219,7 +255,7 @@
             });
         }
 
-        // 5 Farklı Renk Seçeneği (Kafa, Gövde ve Özel Dil Rengi)
+        // 5 Farklı Renk Seçeneği
         const yilanRenkleri = [
             { ad: "Neon Yeşil", kafa: "#00ffcc", govde: "#008866", dil: "#00ffff" },
             { ad: "Cyber Mor", kafa: "#d946ef", govde: "#9333ea", dil: "#f472b6" },
@@ -258,12 +294,15 @@
         }
 
         function oyunuBaslatWeb() {
+            clearInterval(oyunDongusu); // Önceki döngüyü tamamen temizle
+            
             renkIndeks = parseInt(document.getElementById("secim-renk").value);
             mevcutYemIndeks = parseInt(document.getElementById("secim-yem").value);
 
             document.getElementById("aktif-renk-adi").innerText = yilanRenkleri[renkIndeks].ad;
             document.getElementById("menu-ekrani").style.display = "none";
 
+            // Yılanı ve skoru her başlangıçta kesin olarak sıfırla
             yilan = [
                 { x: 10 * birim, y: 10 * birim },
                 { x: 9 * birim, y: 10 * birim },
@@ -276,10 +315,10 @@
             
             let enYuksek = skorTablosu.length > 0 ? skorTablosu[0].puan : 0;
             document.getElementById("en-yuksek-skor").innerText = enYuksek;
+            
             oyunAktif = true;
-
             rastgeleYemUretVerilenIndeksde(mevcutYemIndeks);
-            clearInterval(oyunDongusu);
+            
             oyunDongusu = setInterval(anaDongu, 110);
         }
 
@@ -334,19 +373,33 @@
                 oyunAktif = false;
                 clearInterval(oyunDongusu);
                 
+                sesCal("olum");
+                
                 let oyuncuIsmi = document.getElementById("oyuncu-adi").value.trim() || "İsimsiz";
                 
-                skorTablosu.push({ isim: oyuncuIsmi, puan: skor });
+                // Aynı isim varsa skoru güncelle, yoksa yeni kayıt ekle
+                let mevcutKayit = skorTablosu.find(k => k.isim.toLowerCase() === oyuncuIsmi.toLowerCase());
+                if (mevcutKayit) {
+                    if (skor > mevcutKayit.puan) {
+                        mevcutKayit.puan = skor;
+                    }
+                } else {
+                    skorTablosu.push({ isim: oyuncuIsmi, puan: skor });
+                }
+
                 localStorage.setItem("ultimate_snake_skorlar", JSON.stringify(skorTablosu));
 
-                alert("FATAL ERROR: Kuyruğunu ısırdın!\nOyuncu: " + oyuncuIsmi + "\nSkorun: " + skor);
-                menuyeDon();
+                setTimeout(() => {
+                    alert("FATAL ERROR: Kuyruğunu ısırdın!\nOyuncu: " + oyuncuIsmi + "\nSkorun: " + skor);
+                    menuyeDon();
+                }, 100);
                 return;
             }
 
             if (kafaX === yem.x && kafaY === yem.y) {
                 skor += yem.tip.puan;
                 document.getElementById("skor").innerText = skor;
+                sesCal("yem");
                 siradakiYemiUret();
             } else {
                 yilan.pop();
@@ -371,7 +424,6 @@
                 ctx.fillStyle = i === 0 ? aktifTema.kafa : aktifTema.govde;
                 ctx.fillRect(yilan[i].x, yilan[i].y, birim - 2, birim - 2);
 
-                // Kafaya Temaya Uygun 5 Farklı Renkte Dil Efekti Ekleme
                 if (i === 0) {
                     ctx.fillStyle = aktifTema.dil; 
                     let dilGenislik = 6;
