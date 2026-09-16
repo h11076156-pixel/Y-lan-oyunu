@@ -451,3 +451,21 @@
     </script>
 </body>
 </html>
+                let oyuncuIsmi = document.getElementById("oyuncu-adi").value.trim() || "İsimsiz";
+                
+                // Büyük/küçük harf ve boşlukları tamamen normalize ederek kontrol et
+                let normalizeIsim = oyuncuIsmi.toLowerCase();
+                let mevcutKayit = skorTablosu.find(k => k.isim.trim().toLowerCase() === normalizeIsim);
+                
+                if (mevcutKayit) {
+                    // Eğer aynı isim varsa, sadece yeni skor daha yüksekse güncelle
+                    if (skor > mevcutKayit.puan) {
+                        mevcutKayit.puan = skor;
+                        mevcutKayit.isim = oyuncuIsmi; // Orijinal şık yazılışını koru
+                    }
+                } else {
+                    skorTablosu.push({ isim: oyuncuIsmi, puan: skor });
+                }
+
+                localStorage.setItem("ultimate_snake_skorlar", JSON.stringify(skorTablosu));
+                skorTablosuGuncelle(); // Listeyi anında tazele
