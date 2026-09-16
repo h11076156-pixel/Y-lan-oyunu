@@ -1,4 +1,4 @@
-²<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
@@ -524,3 +524,23 @@
             if (yeniYon === "SOL" && yon !== "SAG") sonrakiYon = "SOL";
             if (yeniYon === "SAG" && yon !== "SOL") sonrakiYon = "SAG";
         }
+// Oyundaki renk temalarını ve nesnelerin renklerini seçilen temaya göre dinamik ayarlayan mantık:
+const renkPaletleri = [
+    { ad: "Neon Yeşil", kafa: "#00ffcc", govde: "#008866", dil: "#00ffff", yem: "#ef4444", saha: "#111827" },
+    { ad: "Cyber Mor", kafa: "#d946ef", govde: "#9333ea", dil: "#f472b6", yem: "#38bdf8", saha: "#180b27" },
+    { ad: "Turuncu Alev", kafa: "#f97316", govde: "#c2410c", dil: "#facc15", yem: "#38bdf8", saha: "#27120b" },
+    { ad: "Kan Kırmızı", kafa: "#ef4444", govde: "#991b1b", dil: "#ff6b6b", yem: "#facc15", saha: "#270b0b" },
+    { ad: "Elektrik Mavi", kafa: "#38bdf8", govde: "#0369a1", dil: "#93c5fd", yem: "#f97316", saha: "#0b1c27" }
+];
+
+// Seçilen tema indeksine göre renkleri uygulayan fonksiyon
+function temaUygula(indeks) {
+    let secilenTema = renkPaletleri[indeks];
+    
+    // Örnek kullanım: İstediğin yerin rengini buradan anında değiştirebilirsin
+    // canvas arka planı
+    // sahaRengi = secilenTema.saha;
+    // Yılan kafası ve gövdesi zaten aktifTema[indeks] ile yönetiliyor
+    
+    return secilenTema;
+}
