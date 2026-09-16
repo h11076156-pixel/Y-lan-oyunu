@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Snake - Skor Takipli</title>
+    <title>Ultimate Snake - Nihai Sürüm</title>
     
     <!-- PWA & Gerçek Uygulama Modu Ayarları -->
     <meta name="mobile-web-app-capable" content="yes">
@@ -24,24 +24,28 @@
         #menu-ekrani {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(11, 15, 25, 0.96);
+            background-color: rgba(11, 15, 25, 0.98);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 10;
+            overflow-y: auto;
+            padding: 20px 0;
         }
-        .secim-kutusu { margin: 10px 0; }
-        select, .basla-btn {
+        .secim-kutusu { margin: 6px 0; }
+        select, input[type="text"], .basla-btn {
             background-color: #1f2937;
             color: #00ffcc;
             border: 2px solid #00ffcc;
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 8px 15px;
+            font-size: 14px;
             border-radius: 8px;
             cursor: pointer;
             font-family: 'Courier New', Courier, monospace;
+            text-align: center;
         }
+        input[type="text"] { width: 180px; color: #fff; }
         .basla-btn:hover { background-color: #00ffcc; color: #0b0f19; }
         canvas {
             background-color: #111827;
@@ -78,12 +82,41 @@
             border-radius: 8px;
         }
         button.yon-btn:active { background-color: #00ffcc; color: #0b0f19; }
-        #rekor-bilgi {
-            margin-top: 15px;
-            font-size: 14px;
-            color: #eab308;
-            text-shadow: 0 0 5px rgba(234, 179, 8, 0.5);
+        
+        /* BEYAZ SKOR TABLOSU ALANI */
+        #skor-tablosu-kutu {
+            background-color: #ffffff;
+            color: #111827;
+            border-radius: 8px;
+            padding: 8px;
+            width: 260px;
+            margin-top: 10px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            text-align: left;
+            font-size: 12px;
         }
+        #skor-tablosu-kutu h3 {
+            margin: 0 0 4px 0;
+            text-align: center;
+            color: #1f2937;
+            font-size: 13px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 4px;
+        }
+        #skor-listesi {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 80px;
+            overflow-y: auto;
+        }
+        #skor-listesi li {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 4px;
+            border-bottom: 1px dashed #e5e7eb;
+        }
+        #skor-listesi li:nth-child(even) { background-color: #f3f4f6; }
     </style>
 </head>
 <body>
@@ -91,19 +124,26 @@
     <!-- BAŞLANGIÇ VE SEÇİM EKRANI -->
     <div id="menu-ekrani">
         <h1>ULTIMATE SNAKE</h1>
-        <p>Stratejini Seç ve Oyuna Başla!</p>
+        <p style="margin: 3px 0 8px 0; font-size: 12px;">Stratejini Seç ve Oyuna Başla!</p>
         
         <div class="secim-kutusu">
-            <label>Yılan Rengi:</label><br>
+            <label style="font-size: 11px;">Oyuncu Adı:</label><br>
+            <input type="text" id="oyuncu-adi" value="Oyuncu" maxlength="12">
+        </div>
+
+        <div class="secim-kutusu">
+            <label style="font-size: 11px;">Yılan & Dil Teması:</label><br>
             <select id="secim-renk">
                 <option value="0">Neon Yeşil</option>
                 <option value="1">Cyber Mor</option>
                 <option value="2">Turuncu Alev</option>
+                <option value="3">Kan Kırmızı</option>
+                <option value="4">Elektrik Mavi</option>
             </select>
         </div>
 
         <div class="secim-kutusu">
-            <label>İlk Başlangıç Yemi:</label><br>
+            <label style="font-size: 11px;">İlk Başlangıç Yemi:</label><br>
             <select id="secim-yem">
                 <option value="0">Kırmızı Elma (1)</option>
                 <option value="1">Kahverengi Çikolata (2)</option>
@@ -114,13 +154,20 @@
         </div>
 
         <button class="basla-btn" onclick="oyunuBaslatWeb()">OYUNA BAŞLA</button>
-        <div id="rekor-bilgi">En Yüksek Skor: <span id="menu-en-yuksek">0</span></div>
+
+        <!-- BEYAZ SKOR TABLOSU -->
+        <div id="skor-tablosu-kutu">
+            <h3>🏆 Skorbord (Şöhretler)</h3>
+            <ul id="skor-listesi">
+                <!-- Skorlar buraya dinamik dolacak -->
+            </ul>
+        </div>
     </div>
 
     <h1>ULTIMATE SNAKE</h1>
     <div id="panel">
         Skor: <span id="skor">0</span> | En Yüksek: <span id="en-yuksek-skor">0</span><br>
-        Aktif Yem: <span id="aktif-yem-adi">-</span> | Renk: <span id="aktif-renk-adi">-</span>
+        Aktif Yem: <span id="aktif-yem-adi">-</span> | Tema: <span id="aktif-renk-adi">-</span>
     </div>
 
     <div class="menu-butonlari">
@@ -148,17 +195,37 @@
         let yon = "SAG";
         let sonrakiYon = "SAG";
         let skor = 0;
-        let enYuksekSkor = localStorage.getItem("ultimate_snake_en_yuksek") || 0;
         let oyunAktif = false;
         let oyunDongusu;
 
-        document.getElementById("menu-en-yuksek").innerText = enYuksekSkor;
-        document.getElementById("en-yuksek-skor").innerText = enYuksekSkor;
+        let skorTablosu = JSON.parse(localStorage.getItem("ultimate_snake_skorlar")) || [];
+        skorTablosuGuncelle();
 
+        function skorTablosuGuncelle() {
+            const liste = document.getElementById("skor-listesi");
+            liste.innerHTML = "";
+            if (skorTablosu.length === 0) {
+                liste.innerHTML = "<li style='text-align:center; color:#6b7280;'>Henüz kayıt yok!</li>";
+                document.getElementById("en-yuksek-skor").innerText = 0;
+                return;
+            }
+            skorTablosu.sort((a, b) => b.puan - a.puan);
+            document.getElementById("en-yuksek-skor").innerText = skorTablosu[0].puan;
+
+            skorTablosu.slice(0, 5).forEach((kayit, index) => {
+                let li = document.createElement("li");
+                li.innerHTML = `<span>${index + 1}. ${kayit.isim}</span> <b>${kayit.puan}</b>`;
+                liste.appendChild(li);
+            });
+        }
+
+        // 5 Farklı Renk Seçeneği (Kafa, Gövde ve Özel Dil Rengi)
         const yilanRenkleri = [
-            { ad: "Neon Yeşil", kafa: "#00ffcc", govde: "#008866" },
-            { ad: "Cyber Mor", kafa: "#d946ef", govde: "#9333ea" },
-            { ad: "Turuncu Alev", kafa: "#f97316", govde: "#c2410c" }
+            { ad: "Neon Yeşil", kafa: "#00ffcc", govde: "#008866", dil: "#00ffff" },
+            { ad: "Cyber Mor", kafa: "#d946ef", govde: "#9333ea", dil: "#f472b6" },
+            { ad: "Turuncu Alev", kafa: "#f97316", govde: "#c2410c", dil: "#facc15" },
+            { ad: "Kan Kırmızı", kafa: "#ef4444", govde: "#991b1b", dil: "#ff6b6b" },
+            { ad: "Elektrik Mavi", kafa: "#38bdf8", govde: "#0369a1", dil: "#93c5fd" }
         ];
         let renkIndeks = 0;
 
@@ -206,7 +273,9 @@
             sonrakiYon = "SAG";
             skor = 0;
             document.getElementById("skor").innerText = skor;
-            document.getElementById("en-yuksek-skor").innerText = enYuksekSkor;
+            
+            let enYuksek = skorTablosu.length > 0 ? skorTablosu[0].puan : 0;
+            document.getElementById("en-yuksek-skor").innerText = enYuksek;
             oyunAktif = true;
 
             rastgeleYemUretVerilenIndeksde(mevcutYemIndeks);
@@ -217,7 +286,7 @@
         function menuyeDon() {
             oyunAktif = false;
             clearInterval(oyunDongusu);
-            document.getElementById("menu-en-yuksek").innerText = enYuksekSkor;
+            skorTablosuGuncelle();
             document.getElementById("menu-ekrani").style.display = "flex";
         }
 
@@ -265,14 +334,12 @@
                 oyunAktif = false;
                 clearInterval(oyunDongusu);
                 
-                let yeniRekorMesaji = "";
-                if (skor > enYuksekSkor) {
-                    enYuksekSkor = skor;
-                    localStorage.setItem("ultimate_snake_en_yuksek", enYuksekSkor);
-                    yeniRekorMesaji = "\n🏆 TEBRİKLER! Yeni En Yüksek Rekor!";
-                }
+                let oyuncuIsmi = document.getElementById("oyuncu-adi").value.trim() || "İsimsiz";
+                
+                skorTablosu.push({ isim: oyuncuIsmi, puan: skor });
+                localStorage.setItem("ultimate_snake_skorlar", JSON.stringify(skorTablosu));
 
-                alert("FATAL ERROR: Kuyruğunu ısırdın!\nSkorun: " + skor + yeniRekorMesaji);
+                alert("FATAL ERROR: Kuyruğunu ısırdın!\nOyuncu: " + oyuncuIsmi + "\nSkorun: " + skor);
                 menuyeDon();
                 return;
             }
@@ -280,13 +347,6 @@
             if (kafaX === yem.x && kafaY === yem.y) {
                 skor += yem.tip.puan;
                 document.getElementById("skor").innerText = skor;
-                
-                if (skor > enYuksekSkor) {
-                    enYuksekSkor = skor;
-                    localStorage.setItem("ultimate_snake_en_yuksek", enYuksekSkor);
-                    document.getElementById("en-yuksek-skor").innerText = enYuksekSkor;
-                }
-
                 siradakiYemiUret();
             } else {
                 yilan.pop();
@@ -310,6 +370,21 @@
             for (let i = 0; i < yilan.length; i++) {
                 ctx.fillStyle = i === 0 ? aktifTema.kafa : aktifTema.govde;
                 ctx.fillRect(yilan[i].x, yilan[i].y, birim - 2, birim - 2);
+
+                // Kafaya Temaya Uygun 5 Farklı Renkte Dil Efekti Ekleme
+                if (i === 0) {
+                    ctx.fillStyle = aktifTema.dil; 
+                    let dilGenislik = 6;
+                    let dilUzunluk = 8;
+                    let dx = 0, dy = 0;
+
+                    if (yon === "SAG") { dx = birim - 2; dy = birim / 2 - 2; dilGenislik = 8; dilUzunluk = 5; }
+                    else if (yon === "SOL") { dx = -6; dy = birim / 2 - 2; dilGenislik = 8; dilUzunluk = 5; }
+                    else if (yon === "YUKARI") { dx = birim / 2 - 2; dy = -6; dilGenislik = 5; dilUzunluk = 8; }
+                    else if (yon === "ASAGI") { dx = birim / 2 - 2; dy = birim - 2; dilGenislik = 5; dilUzunluk = 8; }
+
+                    ctx.fillRect(yilan[i].x + dx, yilan[i].y + dy, dilGenislik, dilUzunluk);
+                }
             }
 
             ctx.fillStyle = yem.tip.renk;
