@@ -567,3 +567,67 @@ function temaUygula(indeks) {
 
         // Yılanın kafa ve gövde renklerini temadan al
         ctx.fillStyle = i === 0 ? aktifTema.kafa : aktifTema.govde;
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Tema Seçimli Oyun Örneği</title>
+    <style>
+        body { background: #0f172a; color: white; font-family: sans-serif; text-align: center; padding-top: 20px; }
+        canvas { border: 2px solid #334155; background: #111827; }
+        .kontrol-paneli { margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="kontrol-paneli">
+        <label for="secim-renk">Tema Seç:</label>
+        <select id="secim-renk" onchange="temaDegistir()">
+            <option value="0">Neon Yeşil</option>
+            <option value="1">Cyber Mor</option>
+            <option value="2">Turuncu Alev</option>
+            <option value="3">Kan Kırmızı</option>
+            <option value="4">Elektrik Mavi</option>
+        </select>
+        <span>Aktif Tema: <strong id="aktif-renk-adi">Neon Yeşil</strong></span>
+    </div>
+
+    <canvas id="oyunSahan" width="400" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById("oyunSahan");
+        const ctx = canvas.getContext("2d");
+
+        // 5 Farklı Tema Paleti
+        const temaPaletleri = [
+            { ad: "Neon Yeşil", kafa: "#00ffcc", govde: "#008866", dil: "#00ffff", saha: "#111827" },
+            { ad: "Cyber Mor", kafa: "#d946ef", govde: "#9333ea", dil: "#f472b6", saha: "#180b27" },
+            { ad: "Turuncu Alev", kafa: "#f97316", govde: "#c2410c", dil: "#facc15", saha: "#27120b" },
+            { ad: "Kan Kırmızı", kafa: "#ef4444", govde: "#991b1b", dil: "#ff6b6b", saha: "#270b0b" },
+            { ad: "Elektrik Mavi", kafa: "#38bdf8", govde: "#0369a1", dil: "#93c5fd", saha: "#0b1c27" }
+        ];
+        let renkIndeks = 0;
+
+        function temaDegistir() {
+            renkIndeks = parseInt(document.getElementById("secim-renk").value);
+            document.getElementById("aktif-renk-adi").innerText = temaPaletleri[renkIndeks].ad;
+        }
+
+        function cizimYap() {
+            let aktifTema = temaPaletleri[renkIndeks];
+            
+            // Saha arkaplanını temaya göre dinamik boya
+            ctx.fillStyle = aktifTema.saha;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Örnek yılan kafası çizimi (Tema rengini test etmek için)
+            ctx.fillStyle = aktifTema.kafa;
+            ctx.fillRect(180, 180, 40, 40);
+        }
+
+        // Sürekli döngü (Test amaçlı)
+        setInterval(cizimYap, 1000 / 30);
+    </script>
+
+</body>
+</html>
