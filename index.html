@@ -469,3 +469,34 @@
 
                 localStorage.setItem("ultimate_snake_skorlar", JSON.stringify(skorTablosu));
                 skorTablosuGuncelle(); // Listeyi anında tazele
+                            if (kuyrukCarpismaKontrol(kafaX, kafaY)) {
+                oyunAktif = false;
+                clearInterval(oyunDongusu);
+                
+                sesCal("olum");
+                
+                let oyuncuIsmi = document.getElementById("oyuncu-adi").value.trim() || "İsimsiz";
+                
+                // TÜM OYUNCULAR İÇİN: Girilen ismin aynısı (büyük/küçük harf duyarsız) tabloda var mı kontrol et
+                let normalizeIsim = oyuncuIsmi.toLowerCase();
+                let mevcutKayit = skorTablosu.find(k => k.isim.trim().toLowerCase() === normalizeIsim);
+                
+                if (mevcutKayit) {
+                    // Eğer bu isim daha önce kaydedilmişse, yeni yapılan skor eskisinden yüksekse güncelle
+                    if (skor > mevcutKayit.puan) {
+                        mevcurKayit.puan = skor; // Dikkat: mevcutKayit yazarken harf hatası olmasın
+                        mevcutKayit.isim = oyuncuIsmi; 
+                    }
+                } else {
+                    // Tabloda hiç yoksa yepyeni bir kayıt olarak ekle
+                    skorTablosu.push({ isim: oyuncuIsmi, puan: skor });
+                }
+
+                localStorage.setItem("ultimate_snake_skorlar", JSON.stringify(skorTablosu));
+
+                setTimeout(() => {
+                    alert("FATAL ERROR: Kuyruğunu ısırdın!\nOyuncu: " + oyuncuIsmi + "\nSkorun: " + skor);
+                    menuyeDon();
+                }, 100);
+                return;
+            }
