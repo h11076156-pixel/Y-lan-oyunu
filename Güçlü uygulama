@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kasa Launcher & Tam Sürüm Koleksiyon</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #111;
+            font-family: monospace;
+            color: #fff;
+            overflow: hidden;
+            user-select: none;
+        }
+        /* Başlangıç Menüsü */
+        #main-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #111, #1a1a2e);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 20px;
+        }
+        .title {
+            font-size: 24px;
+            color: #ffcc00;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        .subtitle {
+            font-size: 11px;
+            color: #00ffcc;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .menu-label {
+            font-size: 11px;
+            color: #aaa;
+            margin-top: 10px;
+            margin-bottom: 4px;
+            width: 280px;
+            text-align: left;
+        }
+        .app-select, .fps-select {
+            width: 280px;
+            padding: 10px;
+            background: #222;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 11px;
+            margin-bottom: 10px;
+            outline: none;
+        }
+        .play-btn {
+            background: #00ffcc;
+            color: #111;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            font-family: monospace;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
+            transition: 0.2s;
+            margin-top: 15px;
+        }
+        .play-btn:active {
+            transform: scale(0.95);
+            background: #00cca3;
+        }
+
+        /* Oyun İçi Arayüz ve HUD (Idle) */
+        #game-screen {
+            display: none;
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        canvas {
+            display: block;
+        }
+        #hud {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.88);
+            border: 1px solid #444;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 11px;
+            line-height: 1.6;
+            z-index: 10;
+            min-width: 210px;
+        }
+        .highlight { color: #00ffcc; font-weight: bold; }
+        .money { color: #ffcc00; font-weight: bold; }
+        
+        .upgrade-btn {
+            margin-top: 4px;
+            width: 100%;
+            background: #ffcc00;
+            color: #111;
+            border: none;
+            padding: 5px;
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .upgrade-btn:hover { background: #e6b800; }
+        .upgrade-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
+        .save-btn { background: #00ffcc; }
+        .code-btn { background: #3399ff; color: #fff; }
+        .profile-btn { background: #ff33cc; color: #fff; }
+        .reset-btn { background: #ff3333; color: #fff; }
+        .menu-back-hud-btn { background: #ff3333; color: #fff; }
+
+        /* Profil Modalı */
+        #profile-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .profile-card {
+            background: #1a1a1a;
+            border: 2px solid #ff33cc;
+            padding: 20px;
+            border-radius: 12px;
+            width: 280px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255, 51, 204, 0.4);
+        }
+        .avatar-box {
+            width: 60px;
+            height: 60px;
+            background: #333;
+            border: 2px solid #00ffcc;
+            border-radius: 50%;
+            margin: 0 auto 10px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 26px;
+        }
+        .close-profile {
+            margin-top: 15px;
+            background: #ff3333;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        /* 3. Oyun: Dinozor Ekranı */
+        #dino-screen {
+            display: none;
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        #dino-hud {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid #444;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 11px;
+            line-height: 1.6;
+            z-index: 10;
+        }
+
+        /* 4. Oyun: Yılan Ekranı */
+        #snake-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #0b0f19;
+            overflow-y: auto;
+            padding: 15px;
+            z-index: 95;
+            text-align: center;
+        }
+        #snake-menu-alani {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: rgba(11, 15, 25, 0.98);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .snake-secim-kutusu { margin: 8px 0; }
+        .snake-secim-kutusu select, .snake-secim-kutusu input[type="text"] {
+            background-color: #1f2937;
+            color: #00ffcc;
+            border: 2px solid #00ffcc;
+            padding: 6px 10px;
+            font-size: 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            width: 200px;
+            text-align: center;
+        }
+        .snake-secim-kutusu input[type="text"] { color: #fff; }
+        .snake-basla-btn {
+            background-color: #00ffcc;
+            color: #0b0f19;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: monospace;
+            margin-top: 10px;
+        }
+        .snake-basla-btn:hover { background-color: #00cca3; }
+
+        #snake-skor-tablosu-kutu {
+            background-color: #ffffff;
+            color: #111827;
+            border-radius: 6px;
+            padding: 6px;
+            width: 100%;
+            margin-top: 15px;
+            text-align: left;
+            font-size: 11px;
+        }
+        #snake-skor-tablosu-kutu h3 {
+            margin: 0 0 4px 0;
+            text-align: center;
+            color: #1f2937;
+            font-size: 12px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 3px;
+        }
+        #snake-skor-listesi {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 70px;
+            overflow-y: auto;
+        }
+        #snake-skor-listesi li {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 4px;
+            border-bottom: 1px dashed #e5e7eb;
+        }
+
+        .snake-kontroller {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .snake-orta-yonler {
+            display: flex;
+            gap: 35px;
+        }
+        button.snake-yon-btn {
+            background-color: #1f2937;
+            color: #00ffcc;
+            border: 2px solid #00ffcc;
+            width: 50px;
+            height: 40px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        button.snake-yon-btn:active { background-color: #00ffcc; color: #0b0f19; }
+
+        .menu-back-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff3333;
+            color: #fff;
+            border: none;
+            padding: 6px 10px;
+            font-family: monospace;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 11px;
+        }
+
+        /* Hikaye Kitabı Ekranı */
+        #story-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #1a1a1a;
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 90;
+        }
+        .story-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding-bottom: 70px;
+            padding-top: 30px;
+        }
+        .story-title {
+            color: #ffcc00;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        .story-subtitle {
+            text-align: center;
+            font-size: 12px;
+            color: #00ffcc;
+            margin-bottom: 20px;
+        }
+        .story-page {
+            display: none;
+        }
+        .story-page.active {
+            display: block;
+        }
+        .story-text {
+            color: #ccc;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        .story-nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+        }
+        .story-nav-btn {
+            background: #00ffcc;
+            color: #111;
+            border: none;
+            padding: 8px 16px;
+            font-weight: bold;
+            font-family: monospace;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .story-nav-btn:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+        }
+        .story-page-indicator {
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ana Menü -->
+    <div id="main-menu">
+        <div class="title">⚡ KASA LAUNCHER</div>
+        <div class="subtitle">Çalıştırmak istediğin uygulamayı seç!</div>
+        
+        <div class="menu-label">Uygulama Seçimi:</div>
+        <select id="appSelect" class="app-select">
+            <option value="simulator">Idle Top Simülatörü (Tam Sürüm)</option>
+            <option value="story">Blokların Ötesinde (Hikaye - 9 Bölüm)</option>
+            <option value="dino">Dinozor Koşusu (Mini Arcade)</option>
+            <option value="snake">Ultimate Snake (Yılan Oyunu)</option>
+        </select>
+        
+        <div class="menu-label">Hedef FPS Sınırı:</div>
+        <select id="fpsSelect" class="fps-select">
+            <option value="20">20 FPS (Tasarruf / Düşük Güç)</option>
+            <option value="30">30 FPS (Dengeli)</option>
+            <option value="60" selected>60 FPS (Akıcı)</option>
+            <option value="120">120 FPS (Yüksek Yenileme)</option>
+            <option value="180">180 FPS (Ultra Akıcı)</option>
+            <option value="0">Sınırsız (Turbo)</option>
+        </select>
+        
+        <button class="play-btn" onclick="launchApp()">OYNA</button>
+    </div>
+
+    <!-- 1. Seçenek: Tam Sürüm Idle Top Simülatör Ekranı -->
+    <div id="game-screen">
+        <div id="hud">
+            <div>FPS: <span id="fps-val" class="highlight">0</span></div>
+            <div>Güç: <span id="power-val" class="highlight">1.0x</span></div>
+            <div>Top: <span id="ball-count" class="highlight">0</span></div>
+            <div>Kasa: <span id="money-val" class="money">0 ₺</span></div>
+            <hr style="border:0; border-top:1px solid #444; margin:4px 0;">
+            <button id="buy-ball-btn" class="upgrade-btn" onclick="buyMoreBalls()">+5 Top (<span id="ball-cost">10</span> ₺)</button>
+            <button id="boost-speed-btn" class="upgrade-btn" onclick="buySpeedBoost()">Hız Arttır (<span id="speed-cost">50</span> ₺)</button>
+            <button class="upgrade-btn" onclick="adjustPower(0.2)">Güç Arttır (+)</button>
+            <button class="upgrade-btn" onclick="adjustPower(-0.2)">Güç Azalt (-)</button>
+            <button class="upgrade-btn profile-btn" onclick="openProfile()">Profilim</button>
+            <button class="upgrade-btn save-btn" onclick="saveGame()">Kaydet</button>
+            <button class="upgrade-btn code-btn" onclick="exportSaveCode()">Kodu Kopyala</button>
+            <button class="upgrade-btn code-btn" onclick="importSaveCode()">Kodla Yükle</button>
+            <button class="upgrade-btn menu-back-hud-btn" onclick="backToMenu()">Menüye Dön</button>
+        </div>
+    </div>
+
+    <!-- Profil Modalı -->
+    <div id="profile-modal">
+        <div class="profile-card">
+            <div class="avatar-box">👑</div>
+            <h3 style="margin: 5px 0; color: #ff33cc;">Oyuncu Profili</h3>
+            <p style="font-size: 11px; color: #aaa; margin-bottom: 12px;">Unvan: <span class="highlight">Top Baronu</span></p>
+            <div style="text-align: left; font-size: 12px; line-height: 1.6; border-top: 1px solid #333; padding-top: 8px;">
+                <div>Toplam Kazanılan: <span id="p-money" class="money">0 ₺</span></div>
+                <div>Mevcut Top: <span id="p-balls" class="highlight">0</span></div>
+                <div>Güç Çarpanı: <span id="p-power" class="highlight">1.0x</span></div>
+            </div>
+            <button class="close-profile" onclick="closeProfile()">Kapat</button>
+        </div>
+    </div>
+
+    <!-- 2. Seçenek: Hikaye Kitabı Ekranı -->
+    <div id="story-screen">
+        <button class="menu-back-btn" onclick="backToMenu()">Menüye Dön</button>
+        <div class="story-container">
+            <div class="story-title">Blokların Ötesinde: Uyanış</div>
+            
+            <div class="story-page active">
+                <div style="text-align: center; padding: 40px 0;">
+                    <div style="font-size: 45px; margin-bottom: 10px;">📖</div>
+                    <div class="story-subtitle">Uyanış</div>
+                    <p style="text-align: center; color: #888; font-size: 12px; margin-top: 20px;">Leo'nun dijital evrendeki macerasını okumaya başlamak için alttaki tuşa bas.</p>
+                </div>
+            </div>
+
+            <div class="story-page">
+                <div class="story-subtitle">Bölüm 1: Sislerin Arasındaki Köy</div>
+                <p class="story-text">Güneş, Piksel Dağları’nın ardında batarken gökyüzü turuncu ve mordan karanlık bir maviliğe bırakıyordu kendini. Leo, elindeki meşaleyi sıkıca kavradı. Meşalenin titrek ışığı, odun duvarlı evinin köşelerini aydınlatıyor, dışarıdan gelen garip sesleri ise pek uzaklaştıramıyordu.</p>
+                <p class="story-text">"Zombiler yine erken başladı," diye mırıldandı Leo.</p>
+            </div>
+
+            <div class="story-page">
+                <div class="story-subtitle">Bölüm 2: Derinliklerin Çağrısı</div>
+                <p class="story-text">Leo, fazla vakit kaybetmeden hazırlığa başladı. Sandığından elmas kazmasını, birkaç altın elmayı ve bir miktar pişmiş bifteği sırt çantasına tıktı. Kendi elleriyle yaptığı demir zırhını kuşanıp demir kılıcını beline taktı.</p>
+            </div>
+
+            <div class="story-page">
+                <div class="story-subtitle">Bölüm 3: Hata Kodu</div>
+                <p class="story-text">İlerledikçe tünel devasa bir salona açıldı. Salonun ortasında havada asılı duran, pırıl pırıl parlayan mavi bir küre vardı. Kürenin etrafında kırmızı ve sarı harflerle garip yazılar dönüyordu: [WARNING: CHUNK_ERROR_909].</p>
+            </div>
+
+            <div class="story-page">
+                <div class="story-subtitle">Bölüm 4: Yeni Bir Başlangıç</div>
+                <p class="story-text">Leo, tereddüt etmeden ileri atıldı ve parlayan mavi küreye dokundu. Ortalık bir anda bembeyaz bir ışıkla kaplandı. Gözlerini açtığında yumuşak çimlerin üzerindeydi. Güneş yeniden doğuyordu.</p>
+            </div>
+
+            <div class="story-page">
+                <div class="story-subtitle">Bölüm 5: Gizli Boyut ve Yeni Keşifler</div>
+                <p class="story-text">Kriz atlatılıp her şey normale döndükten sonra Leo’nun içinde yeni yerler keşfetme arzusu daha da büyüdü. Köyün sınırlarının ötesine, haritanın daha önce hiç render edilmemiş, sislerle kaplı ucuna doğru yola çıktı.</p>
+            </div>
+
+            <div class="story-page">
+                <div class="story-subtitle">Bölüm 6: Altmış Dört Elmasın Peşinde</div>
+                <p class="story-text">Yeni keşiflerin heyecanı tazeyken, köyün en büyük efsanesi akıllarına geldi: Tam 64’lük (bir stack) kusursuz elmas toplamak. Efsaneye göre, tam 64 adet elmas bir arada toplandığında dünyanın çekirdeğindeki en büyük sırra erişilebilirdi.</p>
+            </div>
+
+            <div class="story-page">
+                <div class="story-subtitle">Bölüm 7: Mağaranın Çöküşü ve Kurtuluş</div>
+                <p class="story-text">Vagon raylardan dışarı fırlayıp gün ışığına çıktığı anda, arkalarından kulakları sağır eden devasa bir gümbürtü koptu. Mağaranın tavanını tutan o son blok da kırılmıştı; sistemin veri akışı dengesini yitirmişti.</p>
+            </div>
+
+            <div class="story-page">
+                <div class="story-subtitle">Bölüm 8: Veri Fırtınası ve Karanlık Boşluk</div>
+                <p class="story-text">Veri akışının dengesi tamamen yitirilmişti; evrenin kodları birbirine giriyor, etraftaki dokular saniyeler içinde yok olup yerini sonsuz bir grid boşluğuna bırakıyordu. Leo elindeki elmasları korumaya çalıştı ancak her bir veri bloğu parmaklarının arasından kum gibi kayıp gidiyordu.</p>
+                <p class="story-text">"Sistem kararlılığını kaybetti," diye fısıldadı dijital rüzgar. Köyler, dağlar ve gökyüzü piksellere ayrılarak görünmez bir void havuzuna akıyordu.</p>
+            </div>
+
+            <div class="story-page">
+                <div class="story-subtitle">Bölüm 9: Yeniden Doğuş ve Yeni Evren</div>
+                <p class="story-text">Her şeyin bittiği sanıldığı o karanlık anın ta ortasında, kaybolan verilerin küllerinden yepyeni, pırıl pırıl bir çekirdek enerji doğdu. Leo gözlerini açtığında artık sadece bir oyuncu değil, bu yeni dijital mimarinin koruyucusuydu.</p>
+                <p class="story-text">Artık kurallar eskisi gibi yazılmayacaktı; ellerindeki sınırsız güçle kendi evrenlerini yeniden inşa etme vakti gelmişti.</p>
+            </div>
+
+            <div class="story-nav-buttons">
+                <button id="story-prev-btn" class="story-nav-btn" onclick="changeStoryPage(-1)" disabled>&larr; Önceki</button>
+                <div id="story-indicator" class="story-page-indicator">Kapak</div>
+                <button id="story-next-btn" class="story-nav-btn" onclick="changeStoryPage(1)">Sonraki &rarr;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Seçenek: Dinozor Oyunu Ekranı -->
+    <div id="dino-screen">
+        <button class="menu-back-btn" onclick="backToMenu()">Menüye Dön</button>
+        <div id="dino-hud">
+            <div>Oyun: <span class="highlight">Dinozor Koşusu</span></div>
+            <div>Skor: <span id="dino-score" class="highlight">0</span></div>
+            <div style="font-size: 10px; color: #888; margin-top: 4px;">Zıplamak için Ekrana Dokun / Boşluk</div>
+        </div>
+    </div>
+
+    <!-- 4. Seçenek: Yılan Oyunu Ekranı -->
+    <div id="snake-screen">
+        <button class="menu-back-btn" onclick="backToMenu()">Menüye Dön</button>
+        
+        <div id="snake-menu-alani">
+            <h1 style="font-size: 16px; margin: 5px 0; color: #ff3366;">ULTIMATE SNAKE</h1>
+            <p style="margin: 3px 0 6px 0; font-size: 11px;">Stratejini Seç ve Oyuna Başla!</p>
+            
+            <div class="snake-secim-kutusu">
+                <label style="font-size: 10px;">Oyuncu Adı:</label><br>
+                <input type="text" id="oyuncu-adi" value="Oyuncu" maxlength="12">
+            </div>
+
+            <div class="snake-secim-kutusu">
+                <label style="font-size: 10px;">Yılan & Dil Teması:</label><br>
+                <select id="secim-renk">
+                    <option value="0">Neon Yeşil</option>
+                    <option value="1">Cyber Mor</option>
+                    <option value="2">Turuncu Alev</option>
+                    <option value="3">Kan Kırmızı</option>
+                    <option value="4">Elektrik Mavi</option>
+                </select>
+            </div>
+
+            <div class="snake-secim-kutusu">
+                <label style="font-size: 10px;">İlk Başlangıç Yemi:</label><br>
+                <select id="secim-yem">
+                    <option value="0">Kırmızı Elma (1)</option>
+                    <option value="1">Kahverengi Çikolata (2)</option>
+                    <option value="2">Sarı Muz (3)</option>
+                    <option value="3">Pembe Çilek (4)</option>
+                    <option value="4">Dörtlü Özel El (5)</option>
+                </select>
+            </div>
+
+            <button class="snake-basla-btn" onclick="oyunuBaslatWeb()">OYUNA BAŞLA</button>
+
+            <div id="snake-skor-tablosu-kutu">
+                <h3>🏆 Skorbord (Şöhretler)</h3>
+                <ul id="snake-skor-listesi"></ul>
+            </div>
+        </div>
+
+        <div id="snake-oyun-alani-kapsayici" style="display:none; margin-top: 10px;">
+            <div id="panel" style="font-size: 11px; margin-bottom: 5px;">
+                Skor: <span id="skor" style="color:#ffcc00;">0</span> | En Yüksek: <span id="en-yuksek-skor">0</span><br>
+                Aktif Yem: <span id="aktif-yem-adi" style="color:#00ffcc;">-</span> | Tema: <span id="aktif-renk-adi" style="color:#00ffcc;">-</span>
+            </div>
+
+            <canvas id="oyunAlani" width="360" height="360"></canvas>
+            
+            <div class="snake-kontroller">
+                <button class="snake-yon-btn" onclick="yonDegistir('YUKARI')">⬆️</button>
+                <div class="snake-orta-yonler">
+                    <button class="snake-yon-btn" onclick="yonDegistir('SOL')">⬅️</button>
+                    <button class="snake-yon-btn" onclick="yonDegistir('SAG')">➡️</button>
+                </div>
+                <button class="snake-yon-btn" onclick="yonDegistir('ASAGI')">⬇️</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let running = false;
+        let canvas, ctx;
+        let balls = [];
+        let money = 0;
+        let ballCountTotal = 15;
+        let ballCost = 10;
+        let speedCost = 50;
+        let powerMultiplier = 1.0;
+        
+        let targetFPS = 60;
+        let frameInterval = 1000 / 60;
+        let frameCount = 0;
+        let fpsTimer = 0;
+        let currentFps = 0;
+        let lastTime = performance.now();
+
+        let currentActiveApp = '';
+
+        // Hikaye sayfaları kontrolü
+        const storyPages = document.querySelectorAll('.story-page');
+        let currentStoryPage = 0;
+
+        function changeStoryPage(direction) {
+            currentStoryPage += direction;
+            if (currentStoryPage < 0) currentStoryPage = 0;
+            if (currentStoryPage >= storyPages.length) currentStoryPage = storyPages.length - 1;
+            updateStoryBook();
+            window.scrollTo(0, 0);
+        }
+
+        function updateStoryBook() {
+            storyPages.forEach((page, index) => {
+                if (index === currentStoryPage) {
+                    page.classList.add('active');
+                } else {
+                    page.classList.remove('active');
+                }
+            });
+
+            document.getElementById('story-prev-btn').disabled = currentStoryPage === 0;
+            document.getElementById('story-next-btn').disabled = currentStoryPage === storyPages.length - 1;
+
+            if (currentStoryPage === 0) {
+                document.getElementById('story-indicator').innerText = "Kapak";
+            } else {
+                document.getElementById('story-indicator').innerText = "Bölüm " + currentStoryPage + " / " + (storyPages.length - 1);
+            }
+        }
+
+        const colors = ['#ff3333', '#33ff33', '#3366ff', '#ffcc00', '#ff33cc', '#00ffff'];
+
+        function openProfile() {
+            document.getElementById('p-money').innerText = money + " ₺";
+            document.getElementById('p-balls').innerText = balls.length;
+            document.getElementById('p-power').innerText = powerMultiplier.toFixed(1) + "x";
+            document.getElementById('profile-modal').style.display = 'flex';
+        }
+
+        function closeProfile() {
+            document.getElementById('profile-modal').style.display = 'none';
+        }
+
+        function getSaveDataObject() {
+            return {
+                money: money,
+                ballCountTotal: ballCountTotal,
+                ballCost: ballCost,
+                speedCost: speedCost,
+                powerMultiplier: powerMultiplier
+            };
+        }
+
+        function saveGame() {
+            localStorage.setItem('idleLauncherSave', JSON.stringify(getSaveDataObject()));
+        }
+
+        function loadGame() {
+            const savedData = localStorage.getItem('idleLauncherSave');
+            if (savedData) {
+                applySaveData(savedData);
+            }
+        }
+
+        function applySaveData(jsonString) {
+            try {
+                const data = JSON.parse(jsonString);
+                money = data.money !== undefined ? data.money : money;
+                ballCountTotal = data.ballCountTotal !== undefined ? data.ballCountTotal : ballCountTotal;
+                ballCost = data.ballCost !== undefined ? data.ballCost : ballCost;
+                speedCost = data.speedCost !== undefined ? data.speedCost : speedCost;
+                powerMultiplier = data.powerMultiplier !== undefined ? data.powerMultiplier : powerMultiplier;
+                
+                document.getElementById('ball-cost').innerText = ballCost;
+                document.getElementById('speed-cost').innerText = speedCost;
+                document.getElementById('power-val').innerText = powerMultiplier.toFixed(1) + "x";
+
+                if(currentActiveApp === 'simulator' && canvas) {
+                    balls = [];
+                    for (let i = 0; i < ballCountTotal; i++) {
+                        spawnBall(Math.random() * canvas.width, Math.random() * (canvas.height / 2));
+                    }
+                }
+                saveGame();
+            } catch (e) {
+                alert("Geçersiz kod!");
+            }
+        }
+
+        function exportSaveCode() {
+            const encodedCode = btoa(encodeURIComponent(JSON.stringify(getSaveDataObject())));
+            navigator.clipboard.writeText(encodedCode).then(() => {
+                alert("Kayıt kodun kopyalandı:\n\n" + encodedCode);
+            }).catch(() => {
+                prompt("Kodu elle kopyala:", encodedCode);
+            });
+        }
+
+        function importSaveCode() {
+            const encodedCode = prompt("Kodu buraya yapıştır:");
+            if (encodedCode) {
+                try {
+                    applySaveData(decodeURIComponent(atob(encodedCode.trim())));
+                    alert("Yüklendi!");
+                } catch (e) {
+                    alert("Hatalı kod!");
+                }
+            }
+        }
+
+        function launchApp() {
+            currentActiveApp = document.getElementById('appSelect').value;
+            targetFPS = parseInt(document.getElementById('fpsSelect').value);
+            
+            if (targetFPS > 0) {
+                frameInterval = 1000 / targetFPS;
+            }
+
+            document.getElementById('main-menu').style.display = 'none';
+
+            if (currentActiveApp === 'simulator') {
+                document.getElementById('game-screen').style.display = 'block';
+                if (!canvas) {
+                    initEngine();
+                    loadGame();
+                }
+                running = true;
+                lastTime = performance.now();
+                requestAnimationFrame(gameLoop);
+            } else if (currentActiveApp === 'story') {
+                currentStoryPage = 0;
+                updateStoryBook();
+                document.getElementById('story-screen').style.display = 'block';
+            } else if (currentActiveApp === 'dino') {
+                document.getElementById('dino-screen').style.display = 'block';
+                if (!dinoCanvas) {
+                    initDinoEngine();
+                }
+                dinoRunning = true;
+                dinoLastTime = performance.now();
+                requestAnimationFrame(dinoGameLoop);
+            } else if (currentActiveApp === 'snake') {
+                document.getElementById('snake-screen').style.display = 'block';
+                document.getElementById('snake-menu-alani').style.display = 'block';
+                document.getElementById('snake-oyun-alani-kapsayici').style.display = 'none';
+                skorTablosuGuncelleSnake();
+            }
+        }
+
+        function backToMenu() {
+            running = false;
+            dinoRunning = false;
+            oyunAktif = false;
+            clearInterval(oyunDongusu);
+            currentActiveApp = '';
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('story-screen').style.display = 'none';
+            document.getElementById('dino-screen').style.display = 'none';
+            document.getElementById('snake-screen').style.display = 'none';
+            document.getElementById('main-menu').style.display = 'flex';
+            saveGame();
+        }
+
+        function adjustPower(amount) {
+            powerMultiplier = Math.max(0.2, parseFloat((powerMultiplier + amount).toFixed(1)));
+            document.getElementById('power-val').innerText = powerMultiplier.toFixed(1) + "x";
+            saveGame();
+        }
+
+        function initEngine() {
+            canvas = document.createElement('canvas');
+            ctx = canvas.getContext('2d');
+            document.getElementById('game-screen').appendChild(canvas);
+
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            for (let i = 0; i < ballCountTotal; i++) {
+                spawnBall();
+            }
+        }
+
+        function resizeCanvas() {
+            if (canvas && currentActiveApp === 'simulator') {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        }
+
+        function spawnBall(x, y) {
+            balls.push({
+                x: x !== undefined ? x : canvas.width / 2 + (Math.random() - 0.5) * 300,
+                y: x !== undefined ? y : 80,
+                vx: (Math.random() - 0.5) * 3,
+                vy: Math.random() * 2 + 1,
+                radius: 10,
+                color: colors[Math.floor(Math.random() * colors.length)]
+            });
+        }
+
+        function buyMoreBalls() {
+            if (money >= ballCost) {
+                money -= ballCost;
+                ballCost = Math.floor(ballCost * 1.5);
+                ballCountTotal += 5;
+                document.getElementById('ball-cost').innerText = ballCost;
+                
+                for (let i = 0; i < 5; i++) {
+                    spawnBall();
+                }
+                saveGame();
+            }
+        }
+
+        function buySpeedBoost() {
+            if (money >= speedCost) {
+                money -= speedCost;
+                speedCost = Math.floor(speedCost * 2);
+                powerMultiplier = parseFloat((powerMultiplier + 0.2).toFixed(1));
+                document.getElementById('speed-cost').innerText = speedCost;
+                document.getElementById('power-val').innerText = powerMultiplier.toFixed(1) + "x";
+                saveGame();
+            }
+        }
+
+        function gameLoop(now) {
+            if (!running) return;
+            requestAnimationFrame(gameLoop);
+
+            const elapsed = now - lastTime;
+            if (targetFPS > 0 && elapsed < frameInterval) return;
+            
+            lastTime = now - (targetFPS > 0 ? (elapsed % frameInterval) : 0);
+
+            frameCount++;
+            fpsTimer += elapsed;
+            if (fpsTimer >= 1000) {
+                currentFps = Math.round((frameCount * 1000) / fpsTimer);
+                frameCount = 0;
+                fpsTimer = 0;
+                document.getElementById('fps-val').innerText = currentFps;
+            }
+
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            let redLineY = canvas.height - 60;
+
+            ctx.strokeStyle = '#00ffcc';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, 70);
+            ctx.lineTo(canvas.width, 70);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#ff3333';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, redLineY);
+            ctx.lineTo(canvas.width, redLineY);
+            ctx.stroke();
+
+            for (let i = 0; i < balls.length; i++) {
+                let b = balls[i];
+
+                b.vy += (0.3 * powerMultiplier);
+                b.x += b.vx * powerMultiplier;
+                b.y += b.vy * powerMultiplier;
+
+                if (b.x - b.radius < 0) { b.x = b.radius; b.vx *= -1; }
+                else if (b.x + b.radius > canvas.width) { b.x = canvas.width - b.radius; b.vx *= -1; }
+
+                if (b.y + b.radius > redLineY) {
+                    b.y = 80;
+                    b.vy = Math.random() * 2 + 1;
+                    b.x = Math.random() * canvas.width;
+                    money += Math.round(1 * powerMultiplier);
+                }
+
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                ctx.fillStyle = b.color;
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            document.getElementById('ball-count').innerText = balls.length;
+            document.getElementById('money-val').innerText = money + " ₺";
+
+            document.getElementById('buy-ball-btn').disabled = money < ballCost;
+            document.getElementById('boost-speed-btn').disabled = money < speedCost;
+        }
+
+        // --- DİNOZOR OYUNU MOTORU ---
+        let dinoCanvas, dinoCtx;
+        let dinoRunning = false;
+        let dinoLastTime = performance.now();
+        let dinoScore = 0;
+        let dinoGameSpeed = 5;
+
+        let dino = {
+            x: 50,
+            y: 0,
+            width: 30,
+            height: 40,
+            vy: 0,
+            gravity: 0.8,
+            jumpForce: -12,
+            isJumping: false
+        };
+
+        let obstacles = [];
+        let obstacleTimer = 0;
+
+        function initDinoEngine() {
+            dinoCanvas = document.createElement('canvas');
+            dinoCtx = dinoCanvas.getContext('2d');
+            document.getElementById('dino-screen').appendChild(dinoCanvas);
+
+            resizeDinoCanvas();
+            window.addEventListener('resize', resizeDinoCanvas);
+
+            window.addEventListener('keydown', (e) => {
+                if ((e.code === 'Space' || e.code === 'ArrowUp') && currentActiveApp === 'dino') {
+                    dinoJump();
+                }
+            });
+
+            dinoCanvas.addEventListener('click', () => {
+                dinoJump();
+            });
+
+            resetDinoGame();
+        }
+
+        function resizeDinoCanvas() {
+            if (dinoCanvas && currentActiveApp === 'dino') {
+                dinoCanvas.width = window.innerWidth;
+                dinoCanvas.height = window.innerHeight;
+                dino.y = dinoCanvas.height - 100 - dino.height;
+            }
+        }
+
+        function resetDinoGame() {
+            dinoScore = 0;
+            dinoGameSpeed = 5;
+            obstacles = [];
+            dino.y = dinoCanvas.height - 100 - dino.height;
+            dino.vy = 0;
+            dino.isJumping = false;
+        }
+
+        function dinoJump() {
+            if (!dino.isJumping) {
+                dino.vy = dino.jumpForce;
+                dino.isJumping = true;
+            }
+        }
+
+        function dinoGameLoop(now) {
+            if (!dinoRunning) return;
+            requestAnimationFrame(dinoGameLoop);
+
+            const elapsed = now - dinoLastTime;
+            if (targetFPS > 0 && elapsed < frameInterval) return;
+            dinoLastTime = now - (targetFPS > 0 ? (elapsed % frameInterval) : 0);
+
+            dino.vy += dino.gravity;
+            dino.y += dino.vy;
+
+            let groundY = dinoCanvas.height - 100;
+            if (dino.y > groundY - dino.height) {
+                dino.y = groundY - dino.height;
+                dino.vy = 0;
+                dino.isJumping = false;
+            }
+
+            dinoScore += 0.1;
+            dinoGameSpeed = 5 + Math.floor(dinoScore / 50);
+            document.getElementById('dino-score').innerText = Math.floor(dinoScore);
+
+            obstacleTimer++;
+            if (obstacleTimer > Math.max(40, 100 - dinoGameSpeed * 3)) {
+                obstacles.push({
+                    x: dinoCanvas.width,
+                    y: groundY - 35,
+                    width: 20,
+                    height: 35
+                });
+                obstacleTimer = 0;
+            }
+
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].x -= dinoGameSpeed;
+
+                if (
+                    dino.x < obstacles[i].x + obstacles[i].width &&
+                    dino.x + dino.width > obstacles[i].x &&
+                    dino.y < obstacles[i].y + obstacles[i].height &&
+                    dino.y + dino.height > obstacles[i].y
+                ) {
+                    alert("Oyun Bitti! Skorun: " + Math.floor(dinoScore));
+                    resetDinoGame();
+                }
+
+                if (obstacles[i].x + obstacles[i].width < 0) {
+                    obstacles.splice(i, 1);
+                }
+            }
+
+            dinoCtx.fillStyle = '#111';
+            dinoCtx.fillRect(0, 0, dinoCanvas.width, dinoCanvas.height);
+
+            dinoCtx.strokeStyle = '#00ffcc';
+            dinoCtx.lineWidth = 2;
+            dinoCtx.beginPath();
+            dinoCtx.moveTo(0, groundY);
+            dinoCtx.lineTo(dinoCanvas.width, groundY);
+            dinoCtx.stroke();
+
+            dinoCtx.fillStyle = '#ffcc00';
+            dinoCtx.fillRect(dino.x, dino.y, dino.width, dino.height);
+
+            dinoCtx.fillStyle = '#111';
+            dinoCtx.fillRect(dino.x + 18, dino.y + 8, 6, 6);
+
+            dinoCtx.fillStyle = '#ff3333';
+            for (let obs of obstacles) {
+                dinoCtx.fillRect(obs.x, obs.y, obs.width, obs.height);
+            }
+        }
+
+        // --- ULTIMATE SNAKE MOTORU ---
+        const snakeCanvas = document.getElementById("oyunAlani");
+        const snakeCtx = snakeCanvas.getContext("2d");
+        const birim = 20;
+        const kareSayisi = snakeCanvas.width / birim;
+
+        let yilan = [];
+        let yon = "SAG";
+        let sonrakiYon = "SAG";
+        let skor = 0;
+        let oyunAktif = false;
+        let oyunDongusu;
+
+        let sesCtx = null;
+        function sesCal(tip) {
+            try {
+                if (!sesCtx) {
+                    sesCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                let osc = sesCtx.createOscillator();
+                let gain = sesCtx.createGain();
+                osc.connect(gain);
+                gain.connect(sesCtx.destination);
+                let simdi = sesCtx.currentTime;
+
+                if (tip === "yem") {
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(400, simdi);
+                    osc.frequency.exponentialRampToValueAtTime(800, simdi + 0.1);
+                    gain.gain.setValueAtTime(0.15, simdi);
+                    gain.gain.exponentialRampToValueAtTime(0.01, simdi + 0.1);
+                    osc.start(simdi);
+                    osc.stop(simdi + 0.1);
+                } else if (tip === "olum") {
+                    osc.type = "sawtooth";
+                    osc.frequency.setValueAtTime(150, simdi);
+                    osc.frequency.linearRampToValueAtTime(40, simdi + 0.3);
+                    gain.gain.setValueAtTime(0.3, simdi);
+                    gain.gain.exponentialRampToValueAtTime(0.01, simdi + 0.3);
+                    osc.start(simdi);
+                    osc.stop(simdi + 0.3);
+                }
+            } catch (e) {}
+        }
+
+        let skorTablosu = JSON.parse(localStorage.getItem("ultimate_snake_skorlar")) || [];
+
+        function skorTablosuGuncelleSnake() {
+            const liste = document.getElementById("snake-skor-listesi");
+            liste.innerHTML = "";
+            if (skorTablosu.length === 0) {
+                liste.innerHTML = "<li style='text-align:center; color:#6b7280;'>Henüz kayıt yok!</li>";
+                document.getElementById("en-yuksek-skor").innerText = 0;
+                return;
+            }
+            skorTablosu.sort((a, b) => b.puan - a.puan);
+            document.getElementById("en-yuksek-skor").innerText = skorTablosu[0].puan;
+
+            skorTablosu.slice(0, 5).forEach((kayit, index) => {
+                let li = document.createElement("li");
+                li.innerHTML = `<span>${index + 1}. ${kayit.isim}</span> <b>${kayit.puan}</b>`;
+                liste.appendChild(li);
+            });
+        }
+
+        const yilanRenkleri = [
+            { ad: "Neon Yeşil", kafa: "#00ffcc", govde: "#008866", dil: "#00ffff" },
+            { ad: "Cyber Mor", kafa: "#d946ef", govde: "#9333ea", dil: "#f472b6" },
+            { ad: "Turuncu Alev", kafa: "#f97316", govde: "#c2410c", dil: "#facc15" },
+            { ad: "Kan Kırmızı", kafa: "#ef4444", govde: "#991b1b", dil: "#ff6b6b" },
+            { ad: "Elektrik Mavi", kafa: "#38bdf8", govde: "#0369a1", dil: "#93c5fd" }
+        ];
+        let renkIndeks = 0;
+
+        const yemTurleri = [
+            { ad: "Kırmızı Elma (1)", renk: "#ef4444", puan: 10 },
+            { ad: "Kahverengi Çikolata (2)", renk: "#b45309", puan: 20 },
+            { ad: "Sarı Muz (3)", renk: "#eab308", puan: 30 },
+            { ad: "Pembe Çilek (4)", renk: "#ec4899", puan: 40 },
+            { ad: "Dörtlü Özel El (5)", renk: "#8b5cf6", puan: 50 }
+        ];
+        let mevcutYemIndeks = 0;
+        let yem = { x: 0, y: 0, tip: yemTurleri[0] };
+
+        window.addEventListener("keydown", (olay) => {
+            if (!oyunAktif || currentActiveApp !== 'snake') return;
+            if ((olay.key === "ArrowUp" || olay.key === "w") && yon !== "ASAGI") sonrakiYon = "YUKARI";
+            else if ((olay.key === "ArrowDown" || olay.key === "s") && yon !== "YUKARI") sonrakiYon = "ASAGI";
+            else if ((olay.key === "ArrowLeft" || olay.key === "a") && yon !== "SAG") sonrakiYon = "SOL";
+            else if ((olay.key === "ArrowRight" || olay.key === "d") && yon !== "SOL") sonrakiYon = "SAG";
+        });
+
+        function yonDegistir(yeniYon) {
+            if (!oyunAktif) return;
+            if (yeniYon === "YUKARI" && yon !== "ASAGI") sonrakiYon = "YUKARI";
+            if (yeniYon === "ASAGI" && yon !== "YUKARI") sonrakiYon = "ASAGI";
+            if (yeniYon === "SOL" && yon !== "SAG") sonrakiYon = "SOL";
+            if (yeniYon === "SAG" && yon !== "SOL") sonrakiYon = "SAG";
+        }
+
+        function oyunuBaslatWeb() {
+            clearInterval(oyunDongusu);
+            
+            renkIndeks = parseInt(document.getElementById("secim-renk").value);
+            mevcutYemIndeks = parseInt(document.getElementById("secim-yem").value);
+
+            document.getElementById("aktif-renk-adi").innerText = yilanRenkleri[renkIndeks].ad;
+            document.getElementById("snake-menu-alani").style.display = "none";
+            document.getElementById("snake-oyun-alani-kapsayici").style.display = "block";
+
+            yilan = [
+                { x: 9 * birim, y: 9 * birim },
+                { x: 8 * birim, y: 9 * birim },
+                { x: 7 * birim, y: 9 * birim }
+            ];
+            yon = "SAG";
+            sonrakiYon = "SAG";
+            skor = 0;
+            document.getElementById("skor").innerText = skor;
+            
+            let enYuksek = skorTablosu.length > 0 ? skorTablosu[0].puan : 0;
+            document.getElementById("en-yuksek-skor").innerText = enYuksek;
+            
+            oyunAktif = true;
+            rastgeleYemUretVerilenIndeksde(mevcutYemIndeks);
+            
+            // FPS kontrolüne uyumlu yılan hızı (Standart 110ms)
+            oyunDongusu = setInterval(anaDonguSnake, 110);
+        }
+
+        function menuyeDonSnake() {
+            oyunAktif = false;
+            clearInterval(oyunDongusu);
+            skorTablosuGuncelleSnake();
+            document.getElementById("snake-menu-alani").style.display = "block";
+            document.getElementById("snake-oyun-alani-kapsayici").style.display = "none";
+        }
+
+        function rastgeleYemUretVerilenIndeksde(indeks) {
+            mevcutYemIndeks = indeks;
+            let secilenTip = yemTurleri[mevcutYemIndeks];
+            yem = {
+                x: Math.floor(Math.random() * kareSayisi) * birim,
+                y: Math.floor(Math.random() * kareSayisi) * birim,
+                tip: secilenTip
+            };
+            document.getElementById("aktif-yem-adi").innerText = yem.tip.ad;
+        }
+
+        function siradakiYemiUret() {
+            mevcutYemIndeks = (mevcutYemIndeks + 1) % yemTurleri.length;
+            let secilenTip = yemTurleri[mevcutYemIndeks];
+            yem = {
+                x: Math.floor(Math.random() * kareSayisi) * birim,
+                y: Math.floor(Math.random() * kareSayisi) * birim,
+                tip: secilenTip
+            };
+            document.getElementById("aktif-yem-adi").innerText = yem.tip.ad;
+        }
+
+        function oyunGuncelleSnake() {
+            if (!oyunAktif) return;
+            yon = sonrakiYon;
+            let kafaX = yilan[0].x;
+            let kafaY = yilan[0].y;
+
+            if (yon === "YUKARI") kafaY -= birim;
+            if (yon === "ASAGI") kafaY += birim;
+            if (yon === "SOL") kafaX -= birim;
+            if (yon === "SAG") kafaX += birim;
+
+            if (kafaX < 0) kafaX = snakeCanvas.width - birim;
+            if (kafaX >= snakeCanvas.width) kafaX = 0;
+            if (kafaY < 0) kafaY = snakeCanvas.height - birim;
+            if (kafaY >= snakeCanvas.height) kafaY = 0;
+
+            let yeniKafa = { x: kafaX, y: kafaY };
+
+            for (let i = 1; i < yilan.length; i++) {
+                if (yilan[i].x === kafaX && yilan[i].y === kafaY) {
+                    oyunAktif = false;
+                    clearInterval(oyunDongusu);
+                    sesCal("olum");
+                    
+                    let oyuncuIsmi = document.getElementById("oyuncu-adi").value.trim() || "İsimsiz";
+                    let normalizeIsim = oyuncuIsmi.toLowerCase();
+                    let mevcutKayit = skorTablosu.find(k => k.isim.trim().toLowerCase() === normalizeIsim);
+                    
+                    if (mevcutKayit) {
+                        if (skor > mevcutKayit.puan) {
+                            mevcutKayit.puan = skor;
+                            mevcutKayit.isim = oyuncuIsmi;
+                        }
+                    } else {
+                        skorTablosu.push({ isim: oyuncuIsmi, puan: skor });
+                    }
+
+                    localStorage.setItem("ultimate_snake_skorlar", JSON.stringify(skorTablosu));
+
+                    setTimeout(() => {
+                        alert("FATAL ERROR: Kuyruğunu ısırdın!\nOyuncu: " + oyuncuIsmi + "\nSkorun: " + skor);
+                        menuyeDonSnake();
+                    }, 100);
+                    return;
+                }
+            }
+
+            if (kafaX === yem.x && kafaY === yem.y) {
+                skor += yem.tip.puan;
+                document.getElementById("skor").innerText = skor;
+                sesCal("yem");
+                siradakiYemiUret();
+            } else {
+                yilan.pop();
+            }
+
+            yilan.unshift(yeniKafa);
+        }
+
+        function cizimYapSnake() {
+            snakeCtx.fillStyle = "#111827";
+            snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+
+            let aktifTema = yilanRenkleri[renkIndeks];
+            for (let i = 0; i < yilan.length; i++) {
+                snakeCtx.fillStyle = i === 0 ? aktifTema.kafa : aktifTema.govde;
+                snakeCtx.fillRect(yilan[i].x, yilan[i].y, birim - 2, birim - 2);
+
+                if (i === 0) {
+                    snakeCtx.fillStyle = aktifTema.dil; 
+                    let dilGenislik = 6;
+                    let dilUzunluk = 8;
+                    let dx = 0, dy = 0;
+
+                    if (yon === "SAG") { dx = birim - 2; dy = birim / 2 - 2; dilGenislik = 8; dilUzunluk = 5; }
+                    else if (yon === "SOL") { dx = -6; dy = birim / 2 - 2; dilGenislik = 8; dilUzunluk = 5; }
+                    else if (yon === "YUKARI") { dx = birim / 2 - 2; dy = -6; dilGenislik = 5; dilUzunluk = 8; }
+                    else if (yon === "ASAGI") { dx = birim / 2 - 2; dy = birim - 2; dilGenislik = 5; dilUzunluk = 8; }
+
+                    snakeCtx.fillRect(yilan[i].x + dx, yilan[i].y + dy, dilGenislik, dilUzunluk);
+                }
+            }
+
+            snakeCtx.fillStyle = yem.tip.renk;
+            snakeCtx.fillRect(yem.x, yem.y, birim - 2, birim - 2);
+        }
+
+        function anaDonguSnake() {
+            if (!oyunAktif) return;
+            oyunGuncelleSnake();
+            cizimYapSnake();
+        }
+    </script>
+</body>
+</html>
