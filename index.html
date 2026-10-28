@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kasa Launcher & Tam Sürüm Koleksiyon (Büyük Tuşlar)</title>
+    <title>Kasa Launcher & Tam Sürüm Koleksiyon (Optimizasyonlu)</title>
     <style>
         * {
             box-sizing: border-box;
@@ -170,24 +170,42 @@
             font-weight: bold;
         }
 
-        #dino-screen {
-            display: none;
-            position: relative;
-            width: 100vw;
-            height: 100vh;
+        /* Ortak Menü Kutusu Stilleri */
+        .oyun-menu-kutu {
+            max-width: 340px;
+            margin: 40px auto;
+            background-color: rgba(11, 15, 25, 0.95);
+            border: 2px solid #eab308;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
         }
-        #dino-hud {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.85);
-            border: 1px solid #444;
-            padding: 10px 14px;
+        .oyun-menu-kutu input[type="text"] {
+            background-color: #1f2937;
+            color: #fff;
+            border: 2px solid #eab308;
+            padding: 8px 12px;
+            font-size: 13px;
             border-radius: 6px;
-            font-size: 11px;
-            line-height: 1.6;
-            z-index: 10;
+            font-family: monospace;
+            width: 220px;
+            text-align: center;
+            margin-top: 6px;
+            outline: none;
         }
+        .oyun-basla-genel-btn {
+            background-color: #eab308;
+            color: #111;
+            border: none;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: monospace;
+            margin-top: 15px;
+        }
+        .oyun-basla-genel-btn:hover { background-color: #ca8a04; }
 
         /* Tank Ekranı Stilleri */
         #tank-screen {
@@ -199,8 +217,7 @@
             height: 100vh;
             background-color: #0b0f19;
             z-index: 95;
-            overflow: hidden;
-            text-align: center;
+            overflow-y: auto;
         }
         #tank-hud {
             position: absolute;
@@ -236,6 +253,18 @@
             font-weight: bold;
         }
         button.tank-btn:active { background-color: #eab308; color: #111; }
+
+        #dino-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #111;
+            z-index: 95;
+            overflow-y: auto;
+        }
 
         #snake-screen {
             display: none;
@@ -284,7 +313,7 @@
         }
         .snake-basla-btn:hover { background-color: #00cca3; }
 
-        #snake-skor-tablosu-kutu {
+        #snake-skor-tablosu-kutu, .skor-tablosu-ortak {
             background-color: #ffffff;
             color: #111827;
             border-radius: 6px;
@@ -294,7 +323,7 @@
             text-align: left;
             font-size: 11px;
         }
-        #snake-skor-tablosu-kutu h3 {
+        #snake-skor-tablosu-kutu h3, .skor-tablosu-ortak h3 {
             margin: 0 0 4px 0;
             text-align: center;
             color: #1f2937;
@@ -302,14 +331,14 @@
             border-bottom: 2px solid #e5e7eb;
             padding-bottom: 3px;
         }
-        #snake-skor-listesi {
+        #snake-skor-listesi, .skor-listesi-ortak {
             list-style: none;
             padding: 0;
             margin: 0;
             max-height: 70px;
             overflow-y: auto;
         }
-        #snake-skor-listesi li {
+        #snake-skor-listesi li, .skor-listesi-ortak li {
             display: flex;
             justify-content: space-between;
             padding: 2px 4px;
@@ -630,20 +659,30 @@
     <!-- Tank Bombardman Ekranı -->
     <div id="tank-screen">
         <button class="menu-back-btn" onclick="backToMenu()">Menüye Dön</button>
-        <div id="tank-hud">
-            <div>Oyun: <span class="highlight">Tank Bombardmanı</span></div>
-            <div>Skor: <span id="tank-score" class="highlight">0</span></div>
-            <div>Can: <span id="tank-health" style="color:#22c55e; font-weight:bold;">100%</span></div>
+        
+        <div id="tank-menu-alani" class="oyun-menu-kutu">
+            <h2 style="color: #eab308; font-size: 16px; margin-bottom: 8px;">TANK BOMBARDMANI</h2>
+            <div style="font-size: 11px; margin-bottom: 6px;">Oyuncu Adı:</div>
+            <input type="text" id="tank-oyuncu-adi" value="Tankçı" maxlength="12"><br>
+            <button class="oyun-basla-genel-btn" onclick="tankOyunuBaslat()">SAVAŞA BAŞLA 🚀</button>
             
-            <div style="margin-top: 8px; border-top: 1px solid #eab308; padding-top: 4px;">
-                <div style="font-size: 10px; font-weight: bold; text-align: center; color: #facc15;">🏆 Tank Skorbord</div>
-                <ul id="tank-skor-listesi" style="list-style: none; padding: 0; margin: 2px 0 0 0; max-height: 50px; overflow-y: auto; color: #fff;"></ul>
+            <div class="skor-tablosu-ortak" style="margin-top: 15px;">
+                <h3>🏆 Tank Skorbord (<span id="tank-skor-platform-baslik">Genel</span>)</h3>
+                <ul id="tank-skor-listesi" class="skor-listesi-ortak"></ul>
             </div>
         </div>
-        <div class="tank-kontroller">
-            <button class="tank-btn" onclick="tankMove(-1)">⬅️</button>
-            <button class="tank-btn" style="background:#eab308; color:#111;" onclick="tankShoot()">🔥 ATEŞ</button>
-            <button class="tank-btn" onclick="tankMove(1)">➡️</button>
+
+        <div id="tank-oyun-alani-kapsayici" style="display:none; position:relative; width:100vw; height:100vh;">
+            <div id="tank-hud">
+                <div>Oyun: <span class="highlight">Tank Bombardmanı</span></div>
+                <div>Skor: <span id="tank-score" class="highlight">0</span></div>
+                <div>Can: <span id="tank-health" style="color:#22c55e; font-weight:bold;">100%</span></div>
+            </div>
+            <div class="tank-kontroller">
+                <button class="tank-btn" onclick="tankMove(-1)">⬅️</button>
+                <button class="tank-btn" style="background:#eab308; color:#111;" onclick="tankShoot()">🔥 ATEŞ</button>
+                <button class="tank-btn" onclick="tankMove(1)">➡️</button>
+            </div>
         </div>
     </div>
 
@@ -728,18 +767,28 @@
         </div>
     </div>
 
+    <!-- Dinozor Ekranı -->
     <div id="dino-screen">
         <button class="menu-back-btn" onclick="backToMenu()">Menüye Dön</button>
-        <div id="dino-hud">
-            <div>Oyun: <span class="highlight">Dinozor Koşusu</span></div>
-            <div>Skor: <span id="dino-score" class="highlight">0</span></div>
+        
+        <div id="dino-menu-alani" class="oyun-menu-kutu" style="border-color: #00ffcc;">
+            <h2 style="color: #00ffcc; font-size: 16px; margin-bottom: 8px;">DİNOZOR KOŞUSU</h2>
+            <div style="font-size: 11px; margin-bottom: 6px;">Oyuncu Adı:</div>
+            <input type="text" id="dino-oyuncu-adi" value="Koşucu" maxlength="12" style="border-color: #00ffcc; color: #00ffcc;"><br>
+            <button class="oyun-basla-genel-btn" style="background-color: #00ffcc; color: #111;" onclick="dinoOyunuBaslat()">KOŞUYA BAŞLA 🦖</button>
             
-            <div style="margin-top: 8px; border-top: 1px solid #444; padding-top: 4px;">
-                <div style="font-size: 10px; font-weight: bold; color: #00ffcc;">🏆 Dino Skorbord</div>
-                <ul id="dino-skor-listesi" style="list-style: none; padding: 0; margin: 2px 0 0 0; max-height: 50px; overflow-y: auto; background: #fff; color: #111; border-radius: 4px; padding: 2px;"></ul>
+            <div class="skor-tablosu-ortak" style="margin-top: 15px;">
+                <h3>🏆 Dino Skorbord (<span id="dino-skor-platform-baslik">Genel</span>)</h3>
+                <ul id="dino-skor-listesi" class="skor-listesi-ortak"></ul>
             </div>
-            
-            <div style="font-size: 10px; color: #888; margin-top: 4px;">Zıplamak için Dokun / Boşluk</div>
+        </div>
+
+        <div id="dino-oyun-alani-kapsayici" style="display:none; position:relative; width:100vw; height:100vh;">
+            <div id="dino-hud">
+                <div>Oyun: <span class="highlight">Dinozor Koşusu</span></div>
+                <div>Skor: <span id="dino-score" class="highlight">0</span></div>
+                <div style="font-size: 10px; color: #888; margin-top: 4px;">Zıplamak için Dokun / Boşluk</div>
+            </div>
         </div>
     </div>
 
@@ -847,7 +896,20 @@
     <!-- FNAF Oyun Ekranı (6 Gece & Yavaş Zaman) -->
     <div id="fnaf-game-screen">
         <button class="menu-back-btn" onclick="backToMenu()">Menüye Dön</button>
-        <div class="fnaf-container">
+        
+        <div id="fnaf-menu-alani" class="oyun-menu-kutu" style="border-color: #ff3333;">
+            <h2 style="color: #ff3333; font-size: 16px; margin-bottom: 8px;">FNAF: GÜVENLİK NÖBETİ</h2>
+            <div style="font-size: 11px; margin-bottom: 6px;">Oyuncu Adı:</div>
+            <input type="text" id="fnaf-oyuncu-adi" value="Nöbetçi" maxlength="12" style="border-color: #ff3333; color: #ff3333;"><br>
+            <button class="oyun-basla-genel-btn" style="background-color: #ff3333; color: #fff;" onclick="fnafOyunuBaslat()">NÖBETE BAŞLA 🐻</button>
+            
+            <div class="skor-tablosu-ortak" style="margin-top: 15px;">
+                <h3>🏆 FNAF Gece Skorbordu (<span id="fnaf-skor-platform-baslik">Genel</span>)</h3>
+                <ul id="fnaf-skor-listesi" class="skor-listesi-ortak"></ul>
+            </div>
+        </div>
+
+        <div id="fnaf-oyun-kapsayici" class="fnaf-container" style="display:none;">
             <h2 style="color: #ff3333; font-size: 15px; margin-bottom: 8px;" id="fnaf-night-title">GÜVENLİK OFİSİ - GECE 1</h2>
             
             <div class="fnaf-stats">
@@ -863,11 +925,6 @@
 
             <div style="font-size: 10px; margin-bottom: 8px; color: #ccc;" id="warning-box">
                 Durum: Animatronik hareketleri takip ediliyor.
-            </div>
-
-            <div style="margin-bottom: 12px; background: #1a1a1a; padding: 6px; border-radius: 4px; border: 1px solid #ff3333; text-align: left;">
-                <div style="font-size: 10px; font-weight: bold; color: #ff3333; text-align: center;">🏆 FNAF Gece Skorbordu</div>
-                <ul id="fnaf-skor-listesi" style="list-style: none; padding: 0; margin: 2px 0 0 0; max-height: 50px; overflow-y: auto; color: #fff;"></ul>
             </div>
 
             <div class="fnaf-controls">
@@ -929,6 +986,9 @@
             document.getElementById('platform-bilgi-banner').innerText = "Algılanan Platform: " + aktifPlatform;
             document.getElementById('skor-platform-baslik').innerText = aktifPlatform;
             document.getElementById('fnf-skor-platform-baslik').innerText = aktifPlatform;
+            document.getElementById('tank-skor-platform-baslik').innerText = aktifPlatform;
+            document.getElementById('dino-skor-platform-baslik').innerText = aktifPlatform;
+            document.getElementById('fnaf-skor-platform-baslik').innerText = aktifPlatform;
             
             skorTablosuGuncelleTank();
             skorTablosuGuncelleDino();
@@ -954,7 +1014,7 @@
         let lastTime = performance.now();
         let currentActiveApp = '';
 
-        // FNAF 6 Gece ve Yavaş Zaman Değişkenleri
+        // FNAF Değişkenleri
         let fnafInterval = null;
         let fnafNight = 1;
         let fnafHour = 0;
@@ -1097,27 +1157,18 @@
                 requestAnimationFrame(gameLoop);
             } else if (currentActiveApp === 'tank') {
                 document.getElementById('tank-screen').style.display = 'block';
-                if (!tankCanvas) {
-                    initTankEngine();
-                } else {
-                    resetTankGame();
-                }
-                tankRunning = true;
+                document.getElementById('tank-menu-alani').style.display = 'block';
+                document.getElementById('tank-oyun-alani-kapsayici').style.display = 'none';
                 skorTablosuGuncelleTank();
-                requestAnimationFrame(tankGameLoop);
             } else if (currentActiveApp === 'story') {
                 currentStoryPage = 0;
                 updateStoryBook();
                 document.getElementById('story-screen').style.display = 'block';
             } else if (currentActiveApp === 'dino') {
                 document.getElementById('dino-screen').style.display = 'block';
-                if (!dinoCanvas) {
-                    initDinoEngine();
-                }
-                dinoRunning = true;
+                document.getElementById('dino-menu-alani').style.display = 'block';
+                document.getElementById('dino-oyun-alani-kapsayici').style.display = 'none';
                 skorTablosuGuncelleDino();
-                dinoLastTime = performance.now();
-                requestAnimationFrame(dinoGameLoop);
             } else if (currentActiveApp === 'snake') {
                 document.getElementById('snake-screen').style.display = 'block';
                 document.getElementById('snake-menu-alani').style.display = 'block';
@@ -1130,9 +1181,10 @@
                 fnfSkorTablosuGuncelle();
             } else if (currentActiveApp === 'fnaf') {
                 document.getElementById('fnaf-game-screen').style.display = 'block';
+                document.getElementById('fnaf-menu-alani').style.display = 'block';
+                document.getElementById('fnaf-oyun-kapsayici').style.display = 'none';
                 fnafNight = 1;
                 skorTablosuGuncelleFnaf();
-                startFnafGame();
             }
         }
 
@@ -1289,7 +1341,7 @@
             document.getElementById('boost-speed-btn').disabled = money < speedCost;
         }
 
-        // --- Tank Skorbord Fonksiyonları ---
+        // --- Tank Skorbord & Oyun ---
         function skorTablosuGetirTank() {
             try { return JSON.parse(localStorage.getItem(storageKeyTank)) || []; } catch(e) { return []; }
         }
@@ -1297,27 +1349,37 @@
             const liste = document.getElementById("tank-skor-listesi");
             if (!liste) return;
             liste.innerHTML = "";
-            let tablol = skorTablosuGetirTank();
-            if (tablol.length === 0) {
+            let skorTablosu = skorTablosuGetirTank();
+            if (skorTablosu.length === 0) {
                 liste.innerHTML = "<li style='text-align:center; color:#888;'>Kayıt yok</li>";
                 return;
             }
-            tablol.sort((a, b) => b.puan - a.puan);
-            tablol.slice(0, 3).forEach((k, i) => {
+            skorTablosu.sort((a, b) => b.puan - a.puan);
+            skorTablosu.slice(0, 5).forEach((k, i) => {
                 let li = document.createElement("li");
-                li.style.color = "#fff";
-                li.innerHTML = `<span>${i+1}. Tankçı</span> <b>${k.puan}</b>`;
+                li.innerHTML = `<span>${i+1}. ${k.isim}</span> <b>${k.puan}</b>`;
                 liste.appendChild(li);
             });
         }
         function tankSkorKaydet(skorDegeri) {
-            let skorlar = skorTablosuGetirTank();
-            skorlar.push({puan: skorDegeri});
-            try { localStorage.setItem(storageKeyTank, JSON.stringify(skorlar)); } catch(e){}
+            let isimInput = document.getElementById("tank-oyuncu-adi");
+            let oyuncuIsmi = (isimInput && isimInput.value.trim()) ? isimInput.value.trim() : "Tankçı";
+            let skorTablosu = skorTablosuGetirTank();
+            let normalizeIsim = oyuncuIsmi.toLowerCase();
+            let mevcutKayit = skorTablosu.find(k => k.isim.trim().toLowerCase() === normalizeIsim);
+            
+            if (mevcutKayit) {
+                if (skorDegeri > mevcutKayit.puan) {
+                    mevcutKayit.puan = skorDegeri;
+                    mevcutKayit.isim = oyuncuIsmi;
+                }
+            } else {
+                skorTablosu.push({ isim: oyuncuIsmi, puan: skorDegeri });
+            }
+            try { localStorage.setItem(storageKeyTank, JSON.stringify(skorTablosu)); } catch(e){}
             skorTablosuGuncelleTank();
         }
 
-        // --- Tank Bombardman Oyunu Motoru ---
         let tankCanvas, tankCtx;
         let tankRunning = false;
         let tank = { x: 150, y: 0, width: 44, height: 26 };
@@ -1327,13 +1389,20 @@
         let tankHealth = 100;
         let tankSpawnTimer = 0;
 
-        function initTankEngine() {
-            tankCanvas = document.createElement('canvas');
-            tankCtx = tankCanvas.getContext('2d');
-            document.getElementById('tank-screen').appendChild(tankCanvas);
-            resizeTankCanvas();
-            window.addEventListener('resize', resizeTankCanvas);
+        function tankOyunuBaslat() {
+            document.getElementById('tank-menu-alani').style.display = 'none';
+            document.getElementById('tank-oyun-alani-kapsayici').style.display = 'block';
+
+            if (!tankCanvas) {
+                tankCanvas = document.createElement('canvas');
+                tankCtx = tankCanvas.getContext('2d');
+                document.getElementById('tank-oyun-alani-kapsayici').appendChild(tankCanvas);
+                resizeTankCanvas();
+                window.addEventListener('resize', resizeTankCanvas);
+            }
             resetTankGame();
+            tankRunning = true;
+            requestAnimationFrame(tankGameLoop);
         }
 
         function resizeTankCanvas() {
@@ -1353,7 +1422,6 @@
             tankSpawnTimer = 0;
             document.getElementById('tank-score').innerText = tankScore;
             document.getElementById('tank-health').innerText = tankHealth + "%";
-            skorTablosuGuncelleTank();
             if (tankCanvas) tank.x = tankCanvas.width / 2 - tank.width / 2;
         }
 
@@ -1454,14 +1522,15 @@
                         tankRunning = false;
                         tankSkorKaydet(tankScore);
                         alert("OYUN BİTTİ! Tankın imha edildi. Skorun: " + tankScore);
-                        backToMenu();
+                        document.getElementById('tank-oyun-alani-kapsayici').style.display = 'none';
+                        document.getElementById('tank-menu-alani').style.display = 'block';
                         return;
                     }
                 }
             }
         }
 
-        // --- FNAF Skorbord ve Oyun ---
+        // --- FNAF Skorbord & Oyun ---
         function skorTablosuGetirFnaf() {
             try { return JSON.parse(localStorage.getItem(storageKeyFnaf)) || []; } catch(e) { return []; }
         }
@@ -1469,23 +1538,42 @@
             const liste = document.getElementById("fnaf-skor-listesi");
             if (!liste) return;
             liste.innerHTML = "";
-            let tablol = skorTablosuGetirFnaf();
-            if (tablol.length === 0) {
+            let skorTablosu = skorTablosuGetirFnaf();
+            if (skorTablosu.length === 0) {
                 liste.innerHTML = "<li style='text-align:center; color:#888;'>Kayıt yok</li>";
                 return;
             }
-            tablol.sort((a, b) => b.gece - a.gece);
-            tablol.slice(0, 3).forEach((k, i) => {
+            skorTablosu.sort((a, b) => b.gece - a.gece);
+            skorTablosu.slice(0, 5).forEach((k, i) => {
                 let li = document.createElement("li");
-                li.innerHTML = `<span>${i+1}. Gece ${k.gece}</span> <b>Dayandı</b>`;
+                li.innerHTML = `<span>${i+1}. ${k.isim}</span> <b>Gece ${k.gece}</b>`;
                 liste.appendChild(li);
             });
         }
         function fnafSkorKaydet(geceNo) {
-            let skorlar = skorTablosuGetirFnaf();
-            skorlar.push({gece: geceNo});
-            try { localStorage.setItem(storageKeyFnaf, JSON.stringify(skorlar)); } catch(e){}
+            let isimInput = document.getElementById("fnaf-oyuncu-adi");
+            let oyuncuIsmi = (isimInput && isimInput.value.trim()) ? isimInput.value.trim() : "Nöbetçi";
+            let skorTablosu = skorTablosuGetirFnaf();
+            let normalizeIsim = oyuncuIsmi.toLowerCase();
+            let mevcutKayit = skorTablosu.find(k => k.isim.trim().toLowerCase() === normalizeIsim);
+            
+            if (mevcutKayit) {
+                if (geceNo > mevcutKayit.gece) {
+                    mevcutKayit.gece = geceNo;
+                    mevcutKayit.isim = oyuncuIsmi;
+                }
+            } else {
+                skorTablosu.push({ isim: oyuncuIsmi, gece: geceNo });
+            }
+            try { localStorage.setItem(storageKeyFnaf, JSON.stringify(skorTablosu)); } catch(e){}
             skorTablosuGuncelleFnaf();
+        }
+
+        function fnafOyunuBaslat() {
+            document.getElementById('fnaf-menu-alani').style.display = 'none';
+            document.getElementById('fnaf-oyun-kapsayici').style.display = 'block';
+            fnafNight = 1;
+            startFnafGame();
         }
 
         function startFnafGame() {
@@ -1499,7 +1587,6 @@
 
             document.getElementById('fnaf-night-title').innerText = "GÜVENLİK OFİSİ - GECE " + fnafNight;
             updateFnafUI();
-            skorTablosuGuncelleFnaf();
 
             if (fnafInterval) clearInterval(fnafInterval);
             let saatSuresi = Math.max(5000, 10000 - (fnafNight * 800));
@@ -1518,7 +1605,8 @@
                     clearInterval(fnafInterval);
                     fnafSkorKaydet(fnafNight);
                     alert("GÜÇ TÜKENDİ! Gece " + fnafNight + " başarısız! 💀");
-                    backToMenu();
+                    document.getElementById('fnaf-oyun-kapsayici').style.display = 'none';
+                    document.getElementById('fnaf-menu-alani').style.display = 'block';
                     return;
                 }
 
@@ -1534,7 +1622,9 @@
                     } else {
                         fnafSkorKaydet(6);
                         alert("🎉 EFSANE! TÜM 6 GECEYİ TAMAMLADIN VE OYUNU BİTİRDİN! 🏆");
-                        backToMenu();
+                        fnafSkorKaydet(6);
+                        document.getElementById('fnaf-oyun-kapsayici').style.display = 'none';
+                        document.getElementById('fnaf-menu-alani').style.display = 'block';
                     }
                     return;
                 }
@@ -1552,7 +1642,8 @@
                         clearInterval(fnafInterval);
                         fnafSkorKaydet(fnafNight);
                         alert("JUMPSCARE! Kapıyı kapatmadın ve Freddy seni Gece " + fnafNight + "'de yakaladı! 😱");
-                        backToMenu();
+                        document.getElementById('fnaf-oyun-kapsayici').style.display = 'none';
+                        document.getElementById('fnaf-menu-alani').style.display = 'block';
                         return;
                     } else {
                         animatronicPos = 0;
@@ -1640,7 +1731,7 @@
             }
         }
 
-        // --- Dinozor Skorbord ve Oyun ---
+        // --- Dinozor Skorbord & Oyun ---
         function skorTablosuGetirDino() {
             try { return JSON.parse(localStorage.getItem(storageKeyDino)) || []; } catch(e) { return []; }
         }
@@ -1648,23 +1739,35 @@
             const liste = document.getElementById("dino-skor-listesi");
             if (!liste) return;
             liste.innerHTML = "";
-            let tablol = skorTablosuGetirDino();
-            if (tablol.length === 0) {
+            let skorTablosu = skorTablosuGetirDino();
+            if (skorTablosu.length === 0) {
                 liste.innerHTML = "<li style='text-align:center; color:#888;'>Kayıt yok</li>";
                 return;
             }
-            tablol.sort((a, b) => b.puan - a.puan);
-            tablol.slice(0, 3).forEach((k, i) => {
+            skorTablosu.sort((a, b) => b.puan - a.puan);
+            skorTablosu.slice(0, 5).forEach((k, i) => {
                 let li = document.createElement("li");
-                li.style.color = "#111";
-                li.innerHTML = `<span>${i+1}. Koşucu</span> <b>${k.puan}</b>`;
+                li.innerHTML = `<span>${i+1}. ${k.isim}</span> <b>${k.puan}</b>`;
                 liste.appendChild(li);
             });
         }
         function dinoSkorKaydet(puan) {
-            let skorlar = skorTablosuGetirDino();
-            skorlar.push({puan: Math.floor(puan)});
-            try { localStorage.setItem(storageKeyDino, JSON.stringify(skorlar)); } catch(e){}
+            let isimInput = document.getElementById("dino-oyuncu-adi");
+            let oyuncuIsmi = (isimInput && isimInput.value.trim()) ? isimInput.value.trim() : "Koşucu";
+            let skorTablosu = skorTablosuGetirDino();
+            let normalizeIsim = oyuncuIsmi.toLowerCase();
+            let mevcutKayit = skorTablosu.find(k => k.isim.trim().toLowerCase() === normalizeIsim);
+            
+            let tamPuan = Math.floor(puan);
+            if (mevcutKayit) {
+                if (tamPuan > mevcutKayit.puan) {
+                    mevcutKayit.puan = tamPuan;
+                    mevcutKayit.isim = oyuncuIsmi;
+                }
+            } else {
+                skorTablosu.push({ isim: oyuncuIsmi, puan: tamPuan });
+            }
+            try { localStorage.setItem(storageKeyDino, JSON.stringify(skorTablosu)); } catch(e){}
             skorTablosuGuncelleDino();
         }
 
@@ -1688,15 +1791,21 @@
         let obstacles = [];
         let obstacleTimer = 0;
 
-        function initDinoEngine() {
-            dinoCanvas = document.createElement('canvas');
-            dinoCtx = dinoCanvas.getContext('2d');
-            document.getElementById('dino-screen').appendChild(dinoCanvas);
+        function dinoOyunuBaslat() {
+            document.getElementById('dino-menu-alani').style.display = 'none';
+            document.getElementById('dino-oyun-alani-kapsayici').style.display = 'block';
 
-            resizeDinoCanvas();
-            window.addEventListener('resize', resizeDinoCanvas);
-            skorTablosuGuncelleDino();
+            if (!dinoCanvas) {
+                dinoCanvas = document.createElement('canvas');
+                dinoCtx = dinoCanvas.getContext('2d');
+                document.getElementById('dino-oyun-alani-kapsayici').appendChild(dinoCanvas);
+                resizeDinoCanvas();
+                window.addEventListener('resize', resizeDinoCanvas);
+            }
             resetDinoGame();
+            dinoRunning = true;
+            dinoLastTime = performance.now();
+            requestAnimationFrame(dinoGameLoop);
         }
 
         function resizeDinoCanvas() {
@@ -1711,10 +1820,9 @@
             dinoScore = 0;
             dinoGameSpeed = 5;
             obstacles = [];
-            dino.y = dinoCanvas.height - 100 - dino.height;
+            if (dinoCanvas) dino.y = dinoCanvas.height - 100 - dino.height;
             dino.vy = 0;
             dino.isJumping = false;
-            skorTablosuGuncelleDino();
         }
 
         function dinoJump() {
@@ -1766,9 +1874,12 @@
                     dino.y < obstacles[i].y + obstacles[i].height &&
                     dino.y + dino.height > obstacles[i].y
                 ) {
+                    dinoRunning = false;
                     dinoSkorKaydet(dinoScore);
                     alert("Oyun Bitti! Skorun: " + Math.floor(dinoScore));
-                    resetDinoGame();
+                    document.getElementById('dino-oyun-alani-kapsayici').style.display = 'none';
+                    document.getElementById('dino-menu-alani').style.display = 'block';
+                    return;
                 }
 
                 if (obstacles[i].x + obstacles[i].width < 0) {
@@ -1798,6 +1909,7 @@
             }
         }
 
+        // --- FNF Ritim Modu ---
         let fnfCanvas = null, fnfCtx = null;
         let fnfRunning = false;
         let fnfLastTime = performance.now();
@@ -1838,9 +1950,7 @@
         }
 
         function fnfSkorTablosuGetir() {
-            try {
-                return JSON.parse(localStorage.getItem(storageKeyFnf)) || [];
-            } catch(e) { return []; }
+            try { return JSON.parse(localStorage.getItem(storageKeyFnf)) || []; } catch(e) { return []; }
         }
 
         function fnfSkorTablosuGuncelle() {
@@ -1850,11 +1960,10 @@
             let skorTablosu = fnfSkorTablosuGetir();
             
             if (skorTablosu.length === 0) {
-                liste.innerHTML = "<li style='text-align:center; color:#6b7280;'>Bu platformda FNF kaydı yok!</li>";
+                liste.innerHTML = "<li style='text-align:center; color:#6b7280;'>Kayıt yok</li>";
                 return;
             }
             skorTablosu.sort((a, b) => b.puan - a.puan);
-
             skorTablosu.slice(0, 5).forEach((kayit, index) => {
                 let li = document.createElement("li");
                 li.innerHTML = `<span>${index + 1}. ${kayit.isim}</span> <b>${kayit.puan}</b>`;
@@ -1937,16 +2046,11 @@
                 skorTablosu.push({ isim: oyuncuIsmi, puan: fnfScore });
             }
 
-            try {
-                localStorage.setItem(storageKeyFnf, JSON.stringify(skorTablosu));
-            } catch(e) {}
+            try { localStorage.setItem(storageKeyFnf, JSON.stringify(skorTablosu)); } catch(e) {}
 
             alert("TEBRİKLER! 5 Dakikalık Ritim Savaşını Tamamladın!\nSkorun: " + fnfScore);
-            
-            let kapsayici = document.getElementById('fnf-oyun-kapsayici');
-            let menuAlani = document.getElementById('fnf-menu-alani');
-            if(kapsayici) kapsayici.style.display = 'none';
-            if(menuAlani) menuAlani.style.display = 'block';
+            document.getElementById('fnf-oyun-kapsayici').style.display = 'none';
+            document.getElementById('fnf-menu-alani').style.display = 'block';
             fnfSkorTablosuGuncelle();
         }
 
@@ -2081,6 +2185,7 @@
             }
         }
 
+        // --- Snake Oyunu ---
         const snakeCanvas = document.getElementById("oyunAlani");
         const snakeCtx = snakeCanvas.getContext("2d");
         const birim = 20;
@@ -2126,9 +2231,7 @@
         }
 
         function skorTablosuGetirSnake() {
-            try {
-                return JSON.parse(localStorage.getItem(storageKeySnake)) || [];
-            } catch(e) { return []; }
+            try { return JSON.parse(localStorage.getItem(storageKeySnake)) || []; } catch(e) { return []; }
         }
 
         function skorTablosuGuncelleSnake() {
@@ -2332,24 +2435,22 @@
                     sesCal("olum");
                     
                     let inputIsim = document.getElementById("oyuncu-adi");
-                    let oyuncuIsmi = (inputIsim && inputIsim.value.trim()) ? inputIsim.value.trim() : "İsimsiz";
+                    let oyuncuIsmi = (inputIsim && inputIsim.value.trim()) ? inputIsim.value.trim() : "Oyuncu";
                     let skorTablosu = skorTablosuGetirSnake();
                     let normalizeIsim = oyuncuIsmi.toLowerCase();
+                    
                     let mevcutKayit = skorTablosu.find(k => k.isim.trim().toLowerCase() === normalizeIsim);
                     
                     if (mevcutKayit) {
                         if (skor > mevcutKayit.puan) {
-                            mevcurKayit.puan = skor;
+                            mevcutKayit.puan = skor;
                             mevcutKayit.isim = oyuncuIsmi;
                         }
                     } else {
                         skorTablosu.push({ isim: oyuncuIsmi, puan: skor });
                     }
 
-                    try {
-                        localStorage.setItem(storageKeySnake, JSON.stringify(skorTablosu));
-                    } catch(e) {}
-                    
+                    try { localStorage.setItem(storageKeySnake, JSON.stringify(skorTablosu)); } catch(e) {}
                     skorTablosuGuncelleSnake();
 
                     setTimeout(() => {
@@ -2405,10 +2506,6 @@
         function anaDonguSnake() {
             if (!oyunAktif) return;
             oyunGuncelleSnake();
-            c_zimYapSnake();
-        }
-        
-        function c_zimYapSnake() {
             cizimYapSnake();
         }
     </script>
