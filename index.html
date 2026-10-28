@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kasa Launcher & Tam Sürüm Koleksiyon</title>
+    <title>Kasa Launcher & Tam Sürüm Koleksiyon (Büyük Tuşlar)</title>
     <style>
         * {
             box-sizing: border-box;
@@ -17,7 +17,6 @@
             overflow: hidden;
             user-select: none;
         }
-        /* Başlangıç Menüsü */
         #main-menu {
             position: fixed;
             top: 0;
@@ -82,8 +81,6 @@
             transform: scale(0.95);
             background: #00cca3;
         }
-
-        /* Oyun İçi Arayüz ve HUD (Idle) */
         #game-screen {
             display: none;
             position: relative;
@@ -108,7 +105,6 @@
         }
         .highlight { color: #00ffcc; font-weight: bold; }
         .money { color: #ffcc00; font-weight: bold; }
-        
         .upgrade-btn {
             margin-top: 4px;
             width: 100%;
@@ -127,10 +123,8 @@
         .save-btn { background: #00ffcc; }
         .code-btn { background: #3399ff; color: #fff; }
         .profile-btn { background: #ff33cc; color: #fff; }
-        .reset-btn { background: #ff3333; color: #fff; }
         .menu-back-hud-btn { background: #ff3333; color: #fff; }
 
-        /* Profil Modalı */
         #profile-modal {
             display: none;
             position: fixed;
@@ -176,7 +170,6 @@
             font-weight: bold;
         }
 
-        /* 3. Oyun: Dinozor Ekranı */
         #dino-screen {
             display: none;
             position: relative;
@@ -196,7 +189,54 @@
             z-index: 10;
         }
 
-        /* 4. Oyun: Yılan Ekranı */
+        /* Tank Ekranı Stilleri */
+        #tank-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #0b0f19;
+            z-index: 95;
+            overflow: hidden;
+            text-align: center;
+        }
+        #tank-hud {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid #eab308;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            text-align: left;
+            z-index: 10;
+        }
+        .tank-kontroller {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            z-index: 10;
+        }
+        button.tank-btn {
+            background-color: #1f2937;
+            color: #eab308;
+            border: 2px solid #eab308;
+            width: 65px;
+            height: 48px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        button.tank-btn:active { background-color: #eab308; color: #111; }
+
         #snake-screen {
             display: none;
             position: fixed;
@@ -276,31 +316,107 @@
             border-bottom: 1px dashed #e5e7eb;
         }
 
+        /* YILAN OYUNU BÜYÜK KONTROLLERİ */
         .snake-kontroller {
-            margin-top: 10px;
+            margin-top: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 8px;
         }
         .snake-orta-yonler {
             display: flex;
-            gap: 35px;
+            gap: 50px;
         }
         button.snake-yon-btn {
             background-color: #1f2937;
             color: #00ffcc;
             border: 2px solid #00ffcc;
-            width: 50px;
-            height: 40px;
-            font-size: 14px;
+            width: 72px;
+            height: 56px;
+            font-size: 22px;
             cursor: pointer;
+            border-radius: 10px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 255, 204, 0.2);
+        }
+        button.snake-yon-btn:active { 
+            background-color: #00ffcc; 
+            color: #0b0f19; 
+            transform: scale(0.95);
+        }
+
+        #fnf-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #0c0c14;
+            overflow-y: auto;
+            z-index: 95;
+            text-align: center;
+            padding: 10px;
+        }
+        #fnf-menu-alani {
+            max-width: 400px;
+            margin: 20px auto;
+            background-color: rgba(12, 12, 20, 0.98);
+            border: 2px solid #ff33cc;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .fnf-skor-tablosu-kutu {
+            background-color: #ffffff;
+            color: #111827;
             border-radius: 6px;
+            padding: 6px;
+            width: 100%;
+            margin-top: 15px;
+            text-align: left;
+            font-size: 11px;
+        }
+        .fnf-skor-tablosu-kutu h3 {
+            margin: 0 0 4px 0;
+            text-align: center;
+            color: #111827;
+            font-size: 12px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 3px;
+        }
+        #fnf-skor-listesi {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 70px;
+            overflow-y: auto;
+        }
+        #fnf-skor-listesi li {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 4px;
+            border-bottom: 1px dashed #e5e7eb;
+        }
+
+        .fnf-kontroller {
+            margin-top: 8px;
             display: flex;
             justify-content: center;
-            align-items: center;
+            gap: 15px;
         }
-        button.snake-yon-btn:active { background-color: #00ffcc; color: #0b0f19; }
+        button.fnf-yon-btn {
+            background-color: #1f2937;
+            color: #ff33cc;
+            border: 2px solid #ff33cc;
+            width: 60px;
+            height: 42px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        button.fnf-yon-btn:active { background-color: #ff33cc; color: #0c0c14; }
 
         .menu-back-btn {
             position: absolute;
@@ -318,7 +434,75 @@
             font-size: 11px;
         }
 
-        /* Hikaye Kitabı Ekranı */
+        /* FNAF Ekranı Stil (6 Gece Destekli) */
+        #fnaf-game-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #050505;
+            z-index: 95;
+            padding: 15px;
+            text-align: center;
+            overflow-y: auto;
+        }
+        .fnaf-container {
+            max-width: 420px;
+            margin: 20px auto;
+            background: #111;
+            border: 2px solid #ff3333;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .fnaf-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin-bottom: 10px;
+            background: #1a1a1a;
+            padding: 6px 10px;
+            border-radius: 4px;
+        }
+        .camera-view {
+            width: 100%;
+            height: 160px;
+            background: #1a1a1a;
+            border: 1px dashed #444;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        .animatronic-status {
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+        .fnaf-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .fnaf-action-btn {
+            background: #222;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 10px;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .fnaf-action-btn:hover { background: #333; }
+        .fnaf-action-btn.active-door { background: #ff3333; color: #fff; border-color: #ff6666; }
+        .fnaf-action-btn.active-light { background: #ffcc00; color: #111; border-color: #ffda47; }
+
         #story-screen {
             display: none;
             position: fixed;
@@ -396,17 +580,19 @@
 </head>
 <body>
 
-    <!-- Ana Menü -->
     <div id="main-menu">
-        <div class="title">⚡ KASA LAUNCHER</div>
-        <div class="subtitle">Çalıştırmak istediğin uygulamayı seç!</div>
+        <div class="title">⚡ KASA LAUNCHER & OS</div>
+        <div class="subtitle" id="platform-bilgi-banner">Cihaz & Platform Algılanıyor...</div>
         
-        <div class="menu-label">Uygulama Seçimi:</div>
+        <div class="menu-label">Uygulama / Oyun Seçimi:</div>
         <select id="appSelect" class="app-select">
             <option value="simulator">Idle Top Simülatörü (Tam Sürüm)</option>
+            <option value="tank">Tank Bombardman Savaşı (Aksiyon)</option>
             <option value="story">Blokların Ötesinde (Hikaye - 9 Bölüm)</option>
             <option value="dino">Dinozor Koşusu (Mini Arcade)</option>
             <option value="snake">Ultimate Snake (Yılan Oyunu)</option>
+            <option value="fnf">FNF: Kasa Koruyucusu (Ritim Modu)</option>
+            <option value="fnaf">FNAF: Güvenlik Nöbeti (6 Gece Korku Simülasyonu)</option>
         </select>
         
         <div class="menu-label">Hedef FPS Sınırı:</div>
@@ -419,10 +605,9 @@
             <option value="0">Sınırsız (Turbo)</option>
         </select>
         
-        <button class="play-btn" onclick="launchApp()">OYNA</button>
+        <button class="play-btn" onclick="launchApp()">OYNA / BAŞLAT</button>
     </div>
 
-    <!-- 1. Seçenek: Tam Sürüm Idle Top Simülatör Ekranı -->
     <div id="game-screen">
         <div id="hud">
             <div>FPS: <span id="fps-val" class="highlight">0</span></div>
@@ -442,7 +627,26 @@
         </div>
     </div>
 
-    <!-- Profil Modalı -->
+    <!-- Tank Bombardman Ekranı -->
+    <div id="tank-screen">
+        <button class="menu-back-btn" onclick="backToMenu()">Menüye Dön</button>
+        <div id="tank-hud">
+            <div>Oyun: <span class="highlight">Tank Bombardmanı</span></div>
+            <div>Skor: <span id="tank-score" class="highlight">0</span></div>
+            <div>Can: <span id="tank-health" style="color:#22c55e; font-weight:bold;">100%</span></div>
+            
+            <div style="margin-top: 8px; border-top: 1px solid #eab308; padding-top: 4px;">
+                <div style="font-size: 10px; font-weight: bold; text-align: center; color: #facc15;">🏆 Tank Skorbord</div>
+                <ul id="tank-skor-listesi" style="list-style: none; padding: 0; margin: 2px 0 0 0; max-height: 50px; overflow-y: auto; color: #fff;"></ul>
+            </div>
+        </div>
+        <div class="tank-kontroller">
+            <button class="tank-btn" onclick="tankMove(-1)">⬅️</button>
+            <button class="tank-btn" style="background:#eab308; color:#111;" onclick="tankShoot()">🔥 ATEŞ</button>
+            <button class="tank-btn" onclick="tankMove(1)">➡️</button>
+        </div>
+    </div>
+
     <div id="profile-modal">
         <div class="profile-card">
             <div class="avatar-box">👑</div>
@@ -452,12 +656,12 @@
                 <div>Toplam Kazanılan: <span id="p-money" class="money">0 ₺</span></div>
                 <div>Mevcut Top: <span id="p-balls" class="highlight">0</span></div>
                 <div>Güç Çarpanı: <span id="p-power" class="highlight">1.0x</span></div>
+                <div style="font-size: 10px; color: #00ffcc; margin-top: 6px;">Platform: <span id="p-platform">Genel</span></div>
             </div>
             <button class="close-profile" onclick="closeProfile()">Kapat</button>
         </div>
     </div>
 
-    <!-- 2. Seçenek: Hikaye Kitabı Ekranı -->
     <div id="story-screen">
         <button class="menu-back-btn" onclick="backToMenu()">Menüye Dön</button>
         <div class="story-container">
@@ -474,7 +678,6 @@
             <div class="story-page">
                 <div class="story-subtitle">Bölüm 1: Sislerin Arasındaki Köy</div>
                 <p class="story-text">Güneş, Piksel Dağları’nın ardında batarken gökyüzü turuncu ve mordan karanlık bir maviliğe bırakıyordu kendini. Leo, elindeki meşaleyi sıkıca kavradı. Meşalenin titrek ışığı, odun duvarlı evinin köşelerini aydınlatıyor, dışarıdan gelen garip sesleri ise pek uzaklaştıramıyordu.</p>
-                <p class="story-text">"Zombiler yine erken başladı," diye mırıldandı Leo.</p>
             </div>
 
             <div class="story-page">
@@ -510,13 +713,11 @@
             <div class="story-page">
                 <div class="story-subtitle">Bölüm 8: Veri Fırtınası ve Karanlık Boşluk</div>
                 <p class="story-text">Veri akışının dengesi tamamen yitirilmişti; evrenin kodları birbirine giriyor, etraftaki dokular saniyeler içinde yok olup yerini sonsuz bir grid boşluğuna bırakıyordu. Leo elindeki elmasları korumaya çalıştı ancak her bir veri bloğu parmaklarının arasından kum gibi kayıp gidiyordu.</p>
-                <p class="story-text">"Sistem kararlılığını kaybetti," diye fısıldadı dijital rüzgar. Köyler, dağlar ve gökyüzü piksellere ayrılarak görünmez bir void havuzuna akıyordu.</p>
             </div>
 
             <div class="story-page">
                 <div class="story-subtitle">Bölüm 9: Yeniden Doğuş ve Yeni Evren</div>
                 <p class="story-text">Her şeyin bittiği sanıldığı o karanlık anın ta ortasında, kaybolan verilerin küllerinden yepyeni, pırıl pırıl bir çekirdek enerji doğdu. Leo gözlerini açtığında artık sadece bir oyuncu değil, bu yeni dijital mimarinin koruyucusuydu.</p>
-                <p class="story-text">Artık kurallar eskisi gibi yazılmayacaktı; ellerindeki sınırsız güçle kendi evrenlerini yeniden inşa etme vakti gelmişti.</p>
             </div>
 
             <div class="story-nav-buttons">
@@ -527,17 +728,21 @@
         </div>
     </div>
 
-    <!-- 3. Seçenek: Dinozor Oyunu Ekranı -->
     <div id="dino-screen">
         <button class="menu-back-btn" onclick="backToMenu()">Menüye Dön</button>
         <div id="dino-hud">
             <div>Oyun: <span class="highlight">Dinozor Koşusu</span></div>
             <div>Skor: <span id="dino-score" class="highlight">0</span></div>
-            <div style="font-size: 10px; color: #888; margin-top: 4px;">Zıplamak için Ekrana Dokun / Boşluk</div>
+            
+            <div style="margin-top: 8px; border-top: 1px solid #444; padding-top: 4px;">
+                <div style="font-size: 10px; font-weight: bold; color: #00ffcc;">🏆 Dino Skorbord</div>
+                <ul id="dino-skor-listesi" style="list-style: none; padding: 0; margin: 2px 0 0 0; max-height: 50px; overflow-y: auto; background: #fff; color: #111; border-radius: 4px; padding: 2px;"></ul>
+            </div>
+            
+            <div style="font-size: 10px; color: #888; margin-top: 4px;">Zıplamak için Dokun / Boşluk</div>
         </div>
     </div>
 
-    <!-- 4. Seçenek: Yılan Oyunu Ekranı -->
     <div id="snake-screen">
         <button class="menu-back-btn" onclick="backToMenu()">Menüye Dön</button>
         
@@ -575,19 +780,20 @@
             <button class="snake-basla-btn" onclick="oyunuBaslatWeb()">OYUNA BAŞLA</button>
 
             <div id="snake-skor-tablosu-kutu">
-                <h3>🏆 Skorbord (Şöhretler)</h3>
+                <h3>🏆 Skorbord (<span id="skor-platform-baslik">Genel</span>)</h3>
                 <ul id="snake-skor-listesi"></ul>
             </div>
         </div>
 
-        <div id="snake-oyun-alani-kapsayici" style="display:none; margin-top: 10px;">
-            <div id="panel" style="font-size: 11px; margin-bottom: 5px;">
+        <div id="snake-oyun-alani-kapsayici" style="display:none; margin-top: 5px;">
+            <div id="panel" style="font-size: 11px; margin-bottom: 4px;">
                 Skor: <span id="skor" style="color:#ffcc00;">0</span> | En Yüksek: <span id="en-yuksek-skor">0</span><br>
                 Aktif Yem: <span id="aktif-yem-adi" style="color:#00ffcc;">-</span> | Tema: <span id="aktif-renk-adi" style="color:#00ffcc;">-</span>
             </div>
 
-            <canvas id="oyunAlani" width="360" height="360"></canvas>
+            <canvas id="oyunAlani" width="340" height="340"></canvas>
             
+            <!-- BÜYÜK YÖN TUŞLARI -->
             <div class="snake-kontroller">
                 <button class="snake-yon-btn" onclick="yonDegistir('YUKARI')">⬆️</button>
                 <div class="snake-orta-yonler">
@@ -599,7 +805,138 @@
         </div>
     </div>
 
+    <div id="fnf-screen">
+        <button class="menu-back-btn" onclick="backToMenu()">Menüye Dön</button>
+        
+        <div id="fnf-menu-alani">
+            <h1 style="font-size: 16px; margin: 5px 0; color: #ff33cc;">FNF: KASA KORUYUCUSU</h1>
+            <p style="margin: 3px 0 6px 0; font-size: 11px;">Ritim Savaşını Başlat ve Skorborda Adını Yazdır!</p>
+            
+            <div class="snake-secim-kutusu" style="margin: 0 auto;">
+                <label style="font-size: 10px;">Oyuncu Adı:</label><br>
+                <input type="text" id="fnf-oyuncu-adi" value="BF Dostu" maxlength="12">
+            </div>
+
+            <button class="snake-basla-btn" onclick="fnfModaBasla()">MODA BAŞLA ⚡</button>
+
+            <div class="fnf-skor-tablosu-kutu">
+                <h3>🏆 FNF Skorbord (<span id="fnf-skor-platform-baslik">Genel</span>)</h3>
+                <ul id="fnf-skor-listesi"></ul>
+            </div>
+        </div>
+
+        <div id="fnf-oyun-kapsayici" style="display:none;">
+            <div style="position: absolute; top: 10px; left: 10px; font-size: 11px; background: rgba(0,0,0,0.8); padding: 8px 12px; border-radius: 6px; border: 1px solid #ff33cc; text-align: left; z-index: 10;">
+                <div>Mod: <span id="fnf-bolum-baslik" class="highlight">Bölüm 1: Siber Giriş</span></div>
+                <div>Skor: <span id="fnf-score" class="highlight">0</span></div>
+                <div>Can: <span id="fnf-health" style="color:#ff3333; font-weight:bold;">100%</span></div>
+                <div>Süre: <span id="fnf-time" style="color:#ffcc00; font-weight:bold;">05:00</span></div>
+            </div>
+            
+            <canvas id="fnfCanvas" width="360" height="360" style="margin: 45px auto 8px auto; background: #0c0c14; border: 2px solid #ff33cc; border-radius: 8px; display: block;"></canvas>
+            
+            <div class="fnf-kontroller">
+                <button class="fnf-yon-btn" onclick="fnfVur(0)">⬅️</button>
+                <button class="fnf-yon-btn" onclick="fnfVur(1)">⬆️</button>
+                <button class="fnf-yon-btn" onclick="fnfVur(2)">⬇️</button>
+                <button class="fnf-yon-btn" onclick="fnfVur(3)">➡️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FNAF Oyun Ekranı (6 Gece & Yavaş Zaman) -->
+    <div id="fnaf-game-screen">
+        <button class="menu-back-btn" onclick="backToMenu()">Menüye Dön</button>
+        <div class="fnaf-container">
+            <h2 style="color: #ff3333; font-size: 15px; margin-bottom: 8px;" id="fnaf-night-title">GÜVENLİK OFİSİ - GECE 1</h2>
+            
+            <div class="fnaf-stats">
+                <div>Saat: <span id="fnaf-hour" style="color: #ffcc00;">12:00 AM</span></div>
+                <div>Güç: <span id="fnaf-power" style="color: #00ffcc;">100%</span></div>
+            </div>
+
+            <div class="camera-view" id="cam-monitor">
+                <div style="font-size: 10px; color: #888; position: absolute; top: 5px; left: 5px;" id="cam-title">KAMERA: KORİDOR (CAM 1)</div>
+                <div id="animatronic-avatar" style="font-size: 32px;">🟢</div>
+                <div id="animatronic-text" class="animatronic-status" style="color: #00ffcc;">Koridor Sakin.</div>
+            </div>
+
+            <div style="font-size: 10px; margin-bottom: 8px; color: #ccc;" id="warning-box">
+                Durum: Animatronik hareketleri takip ediliyor.
+            </div>
+
+            <div style="margin-bottom: 12px; background: #1a1a1a; padding: 6px; border-radius: 4px; border: 1px solid #ff3333; text-align: left;">
+                <div style="font-size: 10px; font-weight: bold; color: #ff3333; text-align: center;">🏆 FNAF Gece Skorbordu</div>
+                <ul id="fnaf-skor-listesi" style="list-style: none; padding: 0; margin: 2px 0 0 0; max-height: 50px; overflow-y: auto; color: #fff;"></ul>
+            </div>
+
+            <div class="fnaf-controls">
+                <button class="fnaf-action-btn" id="door-btn" onclick="toggleDoor()">Sol Kapı: AÇIK</button>
+                <button class="fnaf-action-btn" id="light-btn" onclick="toggleLight()">Koridor Işığı: KAPALI</button>
+                <button class="fnaf-action-btn" onclick="switchCamera(1)">CAM 1 (Koridor)</button>
+                <button class="fnaf-action-btn" onclick="switchCamera(2)">CAM 2 (Sahne)</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        let aktifPlatform = "Genel Tarayıcı";
+        let storageKeyIdle = "idleLauncherSave_genel";
+        let storageKeySnake = "ultimate_snake_skorlar_genel";
+        let storageKeyFnf = "fnf_skorlar_genel";
+        let storageKeyTank = "tank_skorlar_genel";
+        let storageKeyDino = "dino_skorlar_genel";
+        let storageKeyFnaf = "fnaf_skorlar_genel";
+
+        function platformuAlgilaVeAyarla() {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            const hostname = window.location.hostname;
+
+            if (/samsung/i.test(ua)) {
+                aktifPlatform = "Samsung Cihazı";
+                storageKeyIdle = "idleLauncherSave_samsung";
+                storageKeySnake = "ultimate_snake_skorlar_samsung";
+                storageKeyFnf = "fnf_skorlar_samsung";
+                storageKeyTank = "tank_skorlar_samsung";
+                storageKeyDino = "dino_skorlar_samsung";
+                storageKeyFnaf = "fnaf_skorlar_samsung";
+            } else if (hostname.includes("google") || hostname.includes("blogspot") || hostname.includes("sites.google")) {
+                aktifPlatform = "Google Sites / Servis";
+                storageKeyIdle = "idleLauncherSave_google";
+                storageKeySnake = "ultimate_snake_skorlar_google";
+                storageKeyFnf = "fnf_skorlar_google";
+                storageKeyTank = "tank_skorlar_google";
+                storageKeyDino = "dino_skorlar_google";
+                storageKeyFnaf = "fnaf_skorlar_google";
+            } else if (/android/i.test(ua)) {
+                aktifPlatform = "Android Mobil";
+                storageKeyIdle = "idleLauncherSave_android";
+                storageKeySnake = "ultimate_snake_skorlar_android";
+                storageKeyFnf = "fnf_skorlar_android";
+                storageKeyTank = "tank_skorlar_android";
+                storageKeyDino = "dino_skorlar_android";
+                storageKeyFnaf = "fnaf_skorlar_android";
+            } else if (/iphone|ipad|ipod/i.test(ua)) {
+                aktifPlatform = "iOS / Apple";
+                storageKeyIdle = "idleLauncherSave_ios";
+                storageKeySnake = "ultimate_snake_skorlar_ios";
+                storageKeyFnf = "fnf_skorlar_ios";
+                storageKeyTank = "tank_skorlar_ios";
+                storageKeyDino = "dino_skorlar_ios";
+                storageKeyFnaf = "fnaf_skorlar_ios";
+            }
+
+            document.getElementById('platform-bilgi-banner').innerText = "Algılanan Platform: " + aktifPlatform;
+            document.getElementById('skor-platform-baslik').innerText = aktifPlatform;
+            document.getElementById('fnf-skor-platform-baslik').innerText = aktifPlatform;
+            
+            skorTablosuGuncelleTank();
+            skorTablosuGuncelleDino();
+            skorTablosuGuncelleFnaf();
+        }
+
+        window.addEventListener('DOMContentLoaded', platformuAlgilaVeAyarla);
+
         let running = false;
         let canvas, ctx;
         let balls = [];
@@ -615,10 +952,19 @@
         let fpsTimer = 0;
         let currentFps = 0;
         let lastTime = performance.now();
-
         let currentActiveApp = '';
 
-        // Hikaye sayfaları kontrolü
+        // FNAF 6 Gece ve Yavaş Zaman Değişkenleri
+        let fnafInterval = null;
+        let fnafNight = 1;
+        let fnafHour = 0;
+        let fnafPower = 100;
+        let doorClosed = false;
+        let lightOn = false;
+        let currentCam = 1;
+        let animatronicPos = 0; 
+        let fnafGameRunning = false;
+
         const storyPages = document.querySelectorAll('.story-page');
         let currentStoryPage = 0;
 
@@ -655,6 +1001,7 @@
             document.getElementById('p-money').innerText = money + " ₺";
             document.getElementById('p-balls').innerText = balls.length;
             document.getElementById('p-power').innerText = powerMultiplier.toFixed(1) + "x";
+            document.getElementById('p-platform').innerText = aktifPlatform;
             document.getElementById('profile-modal').style.display = 'flex';
         }
 
@@ -673,11 +1020,11 @@
         }
 
         function saveGame() {
-            localStorage.setItem('idleLauncherSave', JSON.stringify(getSaveDataObject()));
+            localStorage.setItem(storageKeyIdle, JSON.stringify(getSaveDataObject()));
         }
 
         function loadGame() {
-            const savedData = localStorage.getItem('idleLauncherSave');
+            const savedData = localStorage.getItem(storageKeyIdle);
             if (savedData) {
                 applySaveData(savedData);
             }
@@ -711,7 +1058,7 @@
         function exportSaveCode() {
             const encodedCode = btoa(encodeURIComponent(JSON.stringify(getSaveDataObject())));
             navigator.clipboard.writeText(encodedCode).then(() => {
-                alert("Kayıt kodun kopyalandı:\n\n" + encodedCode);
+                alert("Kayıt kodun kopyalandı (" + aktifPlatform + "):\n\n" + encodedCode);
             }).catch(() => {
                 prompt("Kodu elle kopyala:", encodedCode);
             });
@@ -748,6 +1095,16 @@
                 running = true;
                 lastTime = performance.now();
                 requestAnimationFrame(gameLoop);
+            } else if (currentActiveApp === 'tank') {
+                document.getElementById('tank-screen').style.display = 'block';
+                if (!tankCanvas) {
+                    initTankEngine();
+                } else {
+                    resetTankGame();
+                }
+                tankRunning = true;
+                skorTablosuGuncelleTank();
+                requestAnimationFrame(tankGameLoop);
             } else if (currentActiveApp === 'story') {
                 currentStoryPage = 0;
                 updateStoryBook();
@@ -758,6 +1115,7 @@
                     initDinoEngine();
                 }
                 dinoRunning = true;
+                skorTablosuGuncelleDino();
                 dinoLastTime = performance.now();
                 requestAnimationFrame(dinoGameLoop);
             } else if (currentActiveApp === 'snake') {
@@ -765,19 +1123,38 @@
                 document.getElementById('snake-menu-alani').style.display = 'block';
                 document.getElementById('snake-oyun-alani-kapsayici').style.display = 'none';
                 skorTablosuGuncelleSnake();
+            } else if (currentActiveApp === 'fnf') {
+                document.getElementById('fnf-screen').style.display = 'block';
+                document.getElementById('fnf-menu-alani').style.display = 'block';
+                document.getElementById('fnf-oyun-kapsayici').style.display = 'none';
+                fnfSkorTablosuGuncelle();
+            } else if (currentActiveApp === 'fnaf') {
+                document.getElementById('fnaf-game-screen').style.display = 'block';
+                fnafNight = 1;
+                skorTablosuGuncelleFnaf();
+                startFnafGame();
             }
         }
 
         function backToMenu() {
             running = false;
+            tankRunning = false;
             dinoRunning = false;
+            fnfRunning = false;
             oyunAktif = false;
+            fnafGameRunning = false;
             clearInterval(oyunDongusu);
+            if (fnfClockInterval) clearInterval(fnfClockInterval);
+            if (fnafInterval) clearInterval(fnafInterval);
+            
             currentActiveApp = '';
             document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('tank-screen').style.display = 'none';
             document.getElementById('story-screen').style.display = 'none';
             document.getElementById('dino-screen').style.display = 'none';
             document.getElementById('snake-screen').style.display = 'none';
+            document.getElementById('fnf-screen').style.display = 'none';
+            document.getElementById('fnaf-game-screen').style.display = 'none';
             document.getElementById('main-menu').style.display = 'flex';
             saveGame();
         }
@@ -912,7 +1289,385 @@
             document.getElementById('boost-speed-btn').disabled = money < speedCost;
         }
 
-        // --- DİNOZOR OYUNU MOTORU ---
+        // --- Tank Skorbord Fonksiyonları ---
+        function skorTablosuGetirTank() {
+            try { return JSON.parse(localStorage.getItem(storageKeyTank)) || []; } catch(e) { return []; }
+        }
+        function skorTablosuGuncelleTank() {
+            const liste = document.getElementById("tank-skor-listesi");
+            if (!liste) return;
+            liste.innerHTML = "";
+            let tablol = skorTablosuGetirTank();
+            if (tablol.length === 0) {
+                liste.innerHTML = "<li style='text-align:center; color:#888;'>Kayıt yok</li>";
+                return;
+            }
+            tablol.sort((a, b) => b.puan - a.puan);
+            tablol.slice(0, 3).forEach((k, i) => {
+                let li = document.createElement("li");
+                li.style.color = "#fff";
+                li.innerHTML = `<span>${i+1}. Tankçı</span> <b>${k.puan}</b>`;
+                liste.appendChild(li);
+            });
+        }
+        function tankSkorKaydet(skorDegeri) {
+            let skorlar = skorTablosuGetirTank();
+            skorlar.push({puan: skorDegeri});
+            try { localStorage.setItem(storageKeyTank, JSON.stringify(skorlar)); } catch(e){}
+            skorTablosuGuncelleTank();
+        }
+
+        // --- Tank Bombardman Oyunu Motoru ---
+        let tankCanvas, tankCtx;
+        let tankRunning = false;
+        let tank = { x: 150, y: 0, width: 44, height: 26 };
+        let tankBullets = [];
+        let tankEnemies = [];
+        let tankScore = 0;
+        let tankHealth = 100;
+        let tankSpawnTimer = 0;
+
+        function initTankEngine() {
+            tankCanvas = document.createElement('canvas');
+            tankCtx = tankCanvas.getContext('2d');
+            document.getElementById('tank-screen').appendChild(tankCanvas);
+            resizeTankCanvas();
+            window.addEventListener('resize', resizeTankCanvas);
+            resetTankGame();
+        }
+
+        function resizeTankCanvas() {
+            if (tankCanvas && currentActiveApp === 'tank') {
+                tankCanvas.width = window.innerWidth;
+                tankCanvas.height = window.innerHeight;
+                tank.y = tankCanvas.height - 80;
+                tank.x = tankCanvas.width / 2 - tank.width / 2;
+            }
+        }
+
+        function resetTankGame() {
+            tankScore = 0;
+            tankHealth = 100;
+            tankBullets = [];
+            tankEnemies = [];
+            tankSpawnTimer = 0;
+            document.getElementById('tank-score').innerText = tankScore;
+            document.getElementById('tank-health').innerText = tankHealth + "%";
+            skorTablosuGuncelleTank();
+            if (tankCanvas) tank.x = tankCanvas.width / 2 - tank.width / 2;
+        }
+
+        function tankMove(dir) {
+            if (!tankRunning) return;
+            tank.x += dir * 25;
+            tank.x = Math.max(10, Math.min(tankCanvas.width - tank.width - 10, tank.x));
+        }
+
+        function tankShoot() {
+            if (!tankRunning) return;
+            tankBullets.push({
+                x: tank.x + tank.width / 2 - 3,
+                y: tank.y,
+                width: 6,
+                height: 12,
+                speed: 9
+            });
+        }
+
+        function tankGameLoop() {
+            if (!tankRunning) return;
+            requestAnimationFrame(tankGameLoop);
+
+            tankCtx.fillStyle = '#0b0f19';
+            tankCtx.fillRect(0, 0, tankCanvas.width, tankCanvas.height);
+
+            tankCtx.strokeStyle = '#eab308';
+            tankCtx.lineWidth = 3;
+            tankCtx.beginPath();
+            tankCtx.moveTo(0, tankCanvas.height - 40);
+            tankCtx.lineTo(tankCanvas.width, tankCanvas.height - 40);
+            tankCtx.stroke();
+
+            tankCtx.fillStyle = '#eab308';
+            tankCtx.fillRect(tank.x, tank.y + 10, tank.width, tank.height - 10);
+            tankCtx.fillStyle = '#ca8a04';
+            tankCtx.fillRect(tank.x + tank.width / 2 - 4, tank.y, 8, 12);
+
+            for (let i = tankBullets.length - 1; i >= 0; i--) {
+                let b = tankBullets[i];
+                b.y -= b.speed;
+                tankCtx.fillStyle = '#facc15';
+                tankCtx.fillRect(b.x, b.y, b.width, b.height);
+
+                if (b.y < 0) {
+                    tankBullets.splice(i, 1);
+                }
+            }
+
+            tankSpawnTimer++;
+            let dynamicSpawnLimit = Math.max(15, 45 - Math.floor(tankScore / 50) * 5);
+            if (tankSpawnTimer > dynamicSpawnLimit) {
+                let dynamicSpeed = 2.2 + (tankScore / 120);
+                tankEnemies.push({
+                    x: Math.random() * (tankCanvas.width - 40),
+                    y: -30,
+                    width: 36,
+                    height: 24,
+                    speed: dynamicSpeed
+                });
+                tankSpawnTimer = 0;
+            }
+
+            for (let i = tankEnemies.length - 1; i >= 0; i--) {
+                let e = tankEnemies[i];
+                e.y += e.speed;
+
+                tankCtx.fillStyle = '#ef4444';
+                tankCtx.fillRect(e.x, e.y, e.width, e.height);
+                tankCtx.fillStyle = '#b91c1c';
+                tankCtx.fillRect(e.x + 8, e.y - 6, 20, 6);
+
+                let hit = false;
+                for (let j = tankBullets.length - 1; j >= 0; j--) {
+                    let b = tankBullets[j];
+                    if (b.x < e.x + e.width && b.x + b.width > e.x && b.y < e.y + e.height && b.y + b.height > e.y) {
+                        tankBullets.splice(j, 1);
+                        hit = true;
+                        break;
+                    }
+                }
+
+                if (hit) {
+                    tankEnemies.splice(i, 1);
+                    tankScore += 10;
+                    tankHealth = Math.min(100, tankHealth + 15);
+                    document.getElementById('tank-score').innerText = tankScore;
+                    document.getElementById('tank-health').innerText = tankHealth + "%";
+                    continue;
+                }
+
+                if (e.y > tankCanvas.height - 65) {
+                    tankEnemies.splice(i, 1);
+                    tankHealth -= 15;
+                    document.getElementById('tank-health').innerText = tankHealth + "%";
+                    if (tankHealth <= 0) {
+                        tankRunning = false;
+                        tankSkorKaydet(tankScore);
+                        alert("OYUN BİTTİ! Tankın imha edildi. Skorun: " + tankScore);
+                        backToMenu();
+                        return;
+                    }
+                }
+            }
+        }
+
+        // --- FNAF Skorbord ve Oyun ---
+        function skorTablosuGetirFnaf() {
+            try { return JSON.parse(localStorage.getItem(storageKeyFnaf)) || []; } catch(e) { return []; }
+        }
+        function skorTablosuGuncelleFnaf() {
+            const liste = document.getElementById("fnaf-skor-listesi");
+            if (!liste) return;
+            liste.innerHTML = "";
+            let tablol = skorTablosuGetirFnaf();
+            if (tablol.length === 0) {
+                liste.innerHTML = "<li style='text-align:center; color:#888;'>Kayıt yok</li>";
+                return;
+            }
+            tablol.sort((a, b) => b.gece - a.gece);
+            tablol.slice(0, 3).forEach((k, i) => {
+                let li = document.createElement("li");
+                li.innerHTML = `<span>${i+1}. Gece ${k.gece}</span> <b>Dayandı</b>`;
+                liste.appendChild(li);
+            });
+        }
+        function fnafSkorKaydet(geceNo) {
+            let skorlar = skorTablosuGetirFnaf();
+            skorlar.push({gece: geceNo});
+            try { localStorage.setItem(storageKeyFnaf, JSON.stringify(skorlar)); } catch(e){}
+            skorTablosuGuncelleFnaf();
+        }
+
+        function startFnafGame() {
+            fnafHour = 0;
+            fnafPower = 100;
+            doorClosed = false;
+            lightOn = false;
+            currentCam = 1;
+            animatronicPos = 0;
+            fnafGameRunning = true;
+
+            document.getElementById('fnaf-night-title').innerText = "GÜVENLİK OFİSİ - GECE " + fnafNight;
+            updateFnafUI();
+            skorTablosuGuncelleFnaf();
+
+            if (fnafInterval) clearInterval(fnafInterval);
+            let saatSuresi = Math.max(5000, 10000 - (fnafNight * 800));
+
+            fnafInterval = setInterval(() => {
+                if (!fnafGameRunning) return;
+
+                let consumption = 1;
+                if (doorClosed) consumption += (1 + Math.floor(fnafNight / 2));
+                if (lightOn) consumption += 1;
+                
+                fnafPower = Math.max(0, fnafPower - consumption);
+
+                if (fnafPower <= 0) {
+                    fnafGameRunning = false;
+                    clearInterval(fnafInterval);
+                    fnafSkorKaydet(fnafNight);
+                    alert("GÜÇ TÜKENDİ! Gece " + fnafNight + " başarısız! 💀");
+                    backToMenu();
+                    return;
+                }
+
+                fnafHour++;
+                if (fnafHour >= 6) {
+                    fnafGameRunning = false;
+                    clearInterval(fnafInterval);
+                    
+                    if (fnafNight < 6) {
+                        alert("TEBRİKLER! Gece " + fnafNight + " tamamlandı! Şimdi Gece " + (fnafNight + 1) + " başlıyor! 🌙");
+                        fnafNight++;
+                        startFnafGame();
+                    } else {
+                        fnafSkorKaydet(6);
+                        alert("🎉 EFSANE! TÜM 6 GECEYİ TAMAMLADIN VE OYUNU BİTİRDİN! 🏆");
+                        backToMenu();
+                    }
+                    return;
+                }
+
+                let rng = Math.random();
+                let saldiriEsigi = 0.35 - (fnafNight * 0.03);
+
+                if (animatronicPos === 0 && rng > saldiriEsigi) {
+                    animatronicPos = 1;
+                } else if (animatronicPos === 1 && rng > saldiriEsigi) {
+                    animatronicPos = 2;
+                } else if (animatronicPos === 2) {
+                    if (!doorClosed) {
+                        fnafGameRunning = false;
+                        clearInterval(fnafInterval);
+                        fnafSkorKaydet(fnafNight);
+                        alert("JUMPSCARE! Kapıyı kapatmadın ve Freddy seni Gece " + fnafNight + "'de yakaladı! 😱");
+                        backToMenu();
+                        return;
+                    } else {
+                        animatronicPos = 0;
+                        doorClosed = false;
+                        document.getElementById('door-btn').innerText = "Sol Kapı: AÇIK";
+                        document.getElementById('door-btn').classList.remove('active-door');
+                        alert("Animatronik kapıyı zorladı ancak kapalıydı!");
+                    }
+                }
+
+                updateFnafUI();
+            }, saatSuresi);
+        }
+
+        function toggleDoor() {
+            doorClosed = !doorClosed;
+            let btn = document.getElementById('door-btn');
+            if (doorClosed) {
+                btn.innerText = "Sol Kapı: KAPALI";
+                btn.classList.add('active-door');
+            } else {
+                btn.innerText = "Sol Kapı: AÇIK";
+                btn.classList.remove('active-door');
+            }
+        }
+
+        function toggleLight() {
+            lightOn = !lightOn;
+            let btn = document.getElementById('light-btn');
+            if (lightOn) {
+                btn.innerText = "Koridor Işığı: AÇIK";
+                btn.classList.add('active-light');
+            } else {
+                btn.innerText = "Koridor Işığı: KAPALI";
+                btn.classList.remove('active-light');
+            }
+            updateFnafUI();
+        }
+
+        function switchCamera(camNum) {
+            currentCam = camNum;
+            document.getElementById('cam-title').innerText = "KAMERA: " + (camNum === 1 ? "KORİDOR (CAM 1)" : "SAHNE (CAM 2)");
+            updateFnafUI();
+        }
+
+        function updateFnafUI() {
+            let hourText = (fnafHour === 0 ? "12" : fnafHour) + ":00 AM";
+            if (fnafHour === 6) hourText = "06:00 AM";
+            
+            document.getElementById('fnaf-hour').innerText = hourText;
+            document.getElementById('fnaf-power').innerText = fnafPower + "%";
+
+            let avatar = document.getElementById('animatronic-avatar');
+            let text = document.getElementById('animatronic-text');
+            let warning = document.getElementById('warning-box');
+
+            if (currentCam === 1) {
+                if (animatronicPos === 1 || (animatronicPos === 2 && lightOn)) {
+                    avatar.innerText = "🐻";
+                    text.innerText = "Freddy Koridorda Gözüküyor!";
+                    text.style.color = "#ff3333";
+                } else {
+                    avatar.innerText = "🟢";
+                    text.innerText = "Koridor Sakin.";
+                    text.style.color = "#00ffcc";
+                }
+            } else {
+                if (animatronicPos === 0) {
+                    avatar.innerText = "🧸";
+                    text.innerText = "Freddy Sahnesinde Bekliyor.";
+                    text.style.color = "#ffcc00";
+                } else {
+                    avatar.innerText = "❌";
+                    text.innerText = "Sahne Boş! Yerinde Yok!";
+                    text.style.color = "#ff3333";
+                }
+            }
+
+            if (animatronicPos === 2) {
+                warning.innerText = "⚠️ UYARI: Sol kapıda bir şey var! Kapıyı hemen kapat!";
+                warning.style.color = "#ff3333";
+            } else {
+                warning.innerText = "Gece " + fnafNight + " - Animatronik hareketleri takip ediliyor.";
+                warning.style.color = "#ccc";
+            }
+        }
+
+        // --- Dinozor Skorbord ve Oyun ---
+        function skorTablosuGetirDino() {
+            try { return JSON.parse(localStorage.getItem(storageKeyDino)) || []; } catch(e) { return []; }
+        }
+        function skorTablosuGuncelleDino() {
+            const liste = document.getElementById("dino-skor-listesi");
+            if (!liste) return;
+            liste.innerHTML = "";
+            let tablol = skorTablosuGetirDino();
+            if (tablol.length === 0) {
+                liste.innerHTML = "<li style='text-align:center; color:#888;'>Kayıt yok</li>";
+                return;
+            }
+            tablol.sort((a, b) => b.puan - a.puan);
+            tablol.slice(0, 3).forEach((k, i) => {
+                let li = document.createElement("li");
+                li.style.color = "#111";
+                li.innerHTML = `<span>${i+1}. Koşucu</span> <b>${k.puan}</b>`;
+                liste.appendChild(li);
+            });
+        }
+        function dinoSkorKaydet(puan) {
+            let skorlar = skorTablosuGetirDino();
+            skorlar.push({puan: Math.floor(puan)});
+            try { localStorage.setItem(storageKeyDino, JSON.stringify(skorlar)); } catch(e){}
+            skorTablosuGuncelleDino();
+        }
+
         let dinoCanvas, dinoCtx;
         let dinoRunning = false;
         let dinoLastTime = performance.now();
@@ -940,17 +1695,7 @@
 
             resizeDinoCanvas();
             window.addEventListener('resize', resizeDinoCanvas);
-
-            window.addEventListener('keydown', (e) => {
-                if ((e.code === 'Space' || e.code === 'ArrowUp') && currentActiveApp === 'dino') {
-                    dinoJump();
-                }
-            });
-
-            dinoCanvas.addEventListener('click', () => {
-                dinoJump();
-            });
-
+            skorTablosuGuncelleDino();
             resetDinoGame();
         }
 
@@ -969,6 +1714,7 @@
             dino.y = dinoCanvas.height - 100 - dino.height;
             dino.vy = 0;
             dino.isJumping = false;
+            skorTablosuGuncelleDino();
         }
 
         function dinoJump() {
@@ -1020,6 +1766,7 @@
                     dino.y < obstacles[i].y + obstacles[i].height &&
                     dino.y + dino.height > obstacles[i].y
                 ) {
+                    dinoSkorKaydet(dinoScore);
                     alert("Oyun Bitti! Skorun: " + Math.floor(dinoScore));
                     resetDinoGame();
                 }
@@ -1051,7 +1798,289 @@
             }
         }
 
-        // --- ULTIMATE SNAKE MOTORU ---
+        let fnfCanvas = null, fnfCtx = null;
+        let fnfRunning = false;
+        let fnfLastTime = performance.now();
+        let fnfScore = 0;
+        let fnfHealth = 100;
+        let fnfNotes = [];
+        let fnfLaneX = [60, 130, 200, 270];
+        let fnfTimer = 0;
+        let fnfState = 'cutscene'; 
+        let fnfDialogueIndex = 0;
+        let fnfGameTime = 300; 
+        let fnfBolum = 1;
+        let fnfClockInterval = null;
+
+        const fnfDialogues = [
+            { speaker: "Boyfriend", text: "Beep boop bap! (Sistem hatalarını temizleme vakti geldi!)" },
+            { speaker: "Glitch Leo", text: "[WARNING: CHUNK ERROR] Kodlarımı ele geçiremezsin!" },
+            { speaker: "Boyfriend", text: "Skreep! (5 dakikalık zorlu ritim savaşı başlıyor!)" }
+        ];
+
+        let fnfAudioCtx = null;
+        function fnfPlayTone(freq) {
+            try {
+                if (!fnfAudioCtx) {
+                    fnfAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                let osc = fnfAudioCtx.createOscillator();
+                let gain = fnfAudioCtx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(freq, fnfAudioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, fnfAudioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, fnfAudioCtx.currentTime + 0.1);
+                osc.connect(gain);
+                gain.connect(fnfAudioCtx.destination);
+                osc.start();
+                osc.stop(fnfAudioCtx.currentTime + 0.1);
+            } catch(e) {}
+        }
+
+        function fnfSkorTablosuGetir() {
+            try {
+                return JSON.parse(localStorage.getItem(storageKeyFnf)) || [];
+            } catch(e) { return []; }
+        }
+
+        function fnfSkorTablosuGuncelle() {
+            const liste = document.getElementById("fnf-skor-listesi");
+            if (!liste) return;
+            liste.innerHTML = "";
+            let skorTablosu = fnfSkorTablosuGetir();
+            
+            if (skorTablosu.length === 0) {
+                liste.innerHTML = "<li style='text-align:center; color:#6b7280;'>Bu platformda FNF kaydı yok!</li>";
+                return;
+            }
+            skorTablosu.sort((a, b) => b.puan - a.puan);
+
+            skorTablosu.slice(0, 5).forEach((kayit, index) => {
+                let li = document.createElement("li");
+                li.innerHTML = `<span>${index + 1}. ${kayit.isim}</span> <b>${kayit.puan}</b>`;
+                liste.appendChild(li);
+            });
+        }
+
+        function fnfModaBasla() {
+            document.getElementById('fnf-menu-alani').style.display = 'none';
+            document.getElementById('fnf-oyun-kapsayici').style.display = 'block';
+
+            if (!fnfCanvas) {
+                fnfCanvas = document.getElementById('fnfCanvas');
+                fnfCtx = fnfCanvas.getContext('2d');
+            }
+
+            fnfState = 'cutscene';
+            fnfDialogueIndex = 0;
+            fnfRunning = true;
+            fnfLastTime = performance.now();
+            requestAnimationFrame(fnfGameLoop);
+        }
+
+        function BaslatFnfOynanis() {
+            fnfState = 'playing';
+            resetFnfGame();
+            if (fnfClockInterval) clearInterval(fnfClockInterval);
+            fnfClockInterval = setInterval(() => {
+                if (!fnfRunning || fnfState !== 'playing') return;
+                fnfGameTime--;
+                
+                if (fnfGameTime === 150) {
+                    fnfBolum = 2;
+                    let bTitle = document.getElementById('fnf-bolum-baslik');
+                    if(bTitle) bTitle.innerText = "Bölüm 2: System Overload";
+                }
+
+                let m = Math.floor(fnfGameTime / 60);
+                let s = fnfGameTime % 60;
+                let tElem = document.getElementById('fnf-time');
+                if(tElem) tElem.innerText = (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
+
+                if (fnfGameTime <= 0) {
+                    clearInterval(fnfClockInterval);
+                    fnfSkorKaydetVeBitir();
+                }
+            }, 1000);
+        }
+
+        function resetFnfGame() {
+            fnfScore = 0;
+            fnfHealth = 100;
+            fnfNotes = [];
+            fnfTimer = 0;
+            fnfGameTime = 300;
+            fnfBolum = 1;
+            let sElem = document.getElementById('fnf-score');
+            let hElem = document.getElementById('fnf-health');
+            let tElem = document.getElementById('fnf-time');
+            let bElem = document.getElementById('fnf-bolum-baslik');
+            if(sElem) sElem.innerText = fnfScore;
+            if(hElem) hElem.innerText = fnfHealth + "%";
+            if(tElem) tElem.innerText = "05:00";
+            if(bElem) bElem.innerText = "Bölüm 1: Siber Giriş";
+        }
+
+        function fnfSkorKaydetVeBitir() {
+            let isimInput = document.getElementById("fnf-oyuncu-adi");
+            let oyuncuIsmi = (isimInput && isimInput.value.trim()) ? isimInput.value.trim() : "BF Dostu";
+            let skorTablosu = fnfSkorTablosuGetir();
+            let normalizeIsim = oyuncuIsmi.toLowerCase();
+            let mevcutKayit = skorTablosu.find(k => k.isim.trim().toLowerCase() === normalizeIsim);
+            
+            if (mevcutKayit) {
+                if (fnfScore > mevcutKayit.puan) {
+                    mevcutKayit.puan = fnfScore;
+                    mevcutKayit.isim = oyuncuIsmi;
+                }
+            } else {
+                skorTablosu.push({ isim: oyuncuIsmi, puan: fnfScore });
+            }
+
+            try {
+                localStorage.setItem(storageKeyFnf, JSON.stringify(skorTablosu));
+            } catch(e) {}
+
+            alert("TEBRİKLER! 5 Dakikalık Ritim Savaşını Tamamladın!\nSkorun: " + fnfScore);
+            
+            let kapsayici = document.getElementById('fnf-oyun-kapsayici');
+            let menuAlani = document.getElementById('fnf-menu-alani');
+            if(kapsayici) kapsayici.style.display = 'none';
+            if(menuAlani) menuAlani.style.display = 'block';
+            fnfSkorTablosuGuncelle();
+        }
+
+        function fnfVur(laneIndex) {
+            if (!fnfRunning || fnfState !== 'playing') return;
+            let hit = false;
+            let tones = [220, 277, 330, 440];
+            fnfPlayTone(tones[laneIndex]);
+
+            for (let i = 0; i < fnfNotes.length; i++) {
+                let note = fnfNotes[i];
+                if (note.lane === laneIndex && note.y > 240 && note.y < 320) {
+                    fnfScore += (fnfBolum === 2 ? 200 : 100);
+                    fnfHealth = Math.min(100, fnfHealth + 5);
+                    fnfNotes.splice(i, 1);
+                    hit = true;
+                    break;
+                }
+            }
+            if (!hit) {
+                fnfHealth = Math.max(0, fnfHealth - 8);
+            }
+            let sElem = document.getElementById('fnf-score');
+            let hElem = document.getElementById('fnf-health');
+            if(sElem) sElem.innerText = fnfScore;
+            if(hElem) hElem.innerText = fnfHealth + "%";
+
+            if (fnfHealth <= 0) {
+                if (fnfClockInterval) clearInterval(fnfClockInterval);
+                alert("Sistem Çöküntüsü! Canın bitti. Skorun: " + fnfScore);
+                fnfSkorKaydetVeBitir();
+            }
+        }
+
+        function fnfGameLoop(now) {
+            if (!fnfRunning || currentActiveApp !== 'fnf') return;
+            requestAnimationFrame(fnfGameLoop);
+
+            const elapsed = now - fnfLastTime;
+            if (targetFPS > 0 && elapsed < frameInterval) return;
+            fnfLastTime = now - (targetFPS > 0 ? (elapsed % frameInterval) : 0);
+
+            if (!fnfCtx) return;
+
+            fnfCtx.fillStyle = '#0c0c14';
+            fnfCtx.fillRect(0, 0, fnfCanvas.width, fnfCanvas.height);
+
+            if (fnfState === 'cutscene') {
+                fnfCtx.fillStyle = '#ffcc00';
+                fnfCtx.font = '13px monospace';
+                fnfCtx.fillText("=== SİBER RİTİM DİYALOĞU ===", 55, 35);
+
+                fnfCtx.fillStyle = '#38bdf8';
+                fnfCtx.fillRect(40, 60, 65, 80);
+                fnfCtx.fillStyle = '#111';
+                fnfCtx.fillRect(52, 72, 10, 10);
+                fnfCtx.fillRect(78, 72, 10, 10);
+                fnfCtx.fillStyle = '#ff3333';
+                fnfCtx.fillRect(52, 105, 35, 8);
+                fnfCtx.fillStyle = '#fff';
+                fnfCtx.font = '9px monospace';
+                fnfCtx.fillText("Boyfriend", 48, 155);
+
+                fnfCtx.fillStyle = '#ff33cc';
+                fnfCtx.fillRect(255, 60, 65, 80);
+                fnfCtx.fillStyle = '#111';
+                fnfCtx.fillRect(267, 72, 10, 10);
+                fnfCtx.fillRect(293, 72, 10, 10);
+                fnfCtx.fillStyle = '#00ffcc';
+                fnfCtx.fillRect(267, 105, 35, 8);
+                fnfCtx.fillStyle = '#fff';
+                fnfCtx.font = '9px monospace';
+                fnfCtx.fillText("Glitch Leo", 260, 155);
+
+                fnfCtx.fillStyle = '#1a1a2e';
+                fnfCtx.strokeStyle = '#00ffcc';
+                fnfCtx.lineWidth = 2;
+                fnfCtx.fillRect(25, 175, 310, 120);
+                fnfCtx.strokeRect(25, 175, 310, 120);
+
+                let currentDia = fnfDialogues[fnfDialogueIndex] || fnfDialogues[0];
+                fnfCtx.fillStyle = '#ffcc00';
+                fnfCtx.font = '11px monospace';
+                fnfCtx.fillText(currentDia.speaker + ":", 40, 200);
+
+                fnfCtx.fillStyle = '#fff';
+                fnfCtx.font = '10px monospace';
+                fnfCtx.fillText(currentDia.text, 40, 230);
+
+                fnfCtx.fillStyle = '#00ffcc';
+                fnfCtx.font = '9px monospace';
+                fnfCtx.fillText("[ Devam etmek için ekrana dokun / Boşluk ]", 50, 275);
+                return;
+            }
+
+            fnfTimer++;
+            let spawnLimit = (fnfBolum === 2) ? 25 : 35; 
+            if (fnfTimer > spawnLimit) {
+                let randomLane = Math.floor(Math.random() * 4);
+                fnfNotes.push({ lane: randomLane, y: 0 });
+                fnfTimer = 0;
+            }
+
+            let notaHizi = (fnfBolum === 2) ? 5.5 : 4;
+            for (let i = fnfNotes.length - 1; i >= 0; i--) {
+                fnfNotes[i].y += notaHizi;
+                if (fnfNotes[i].y > 340) {
+                    fnfNotes.splice(i, 1);
+                    fnfHealth = Math.max(0, fnfHealth - 10);
+                    let hElem = document.getElementById('fnf-health');
+                    if(hElem) hElem.innerText = fnfHealth + "%";
+                    if (fnfHealth <= 0) {
+                        if (fnfClockInterval) clearInterval(fnfClockInterval);
+                        alert("Sistem Çöküntüsü! Skorun: " + fnfScore);
+                        fnfSkorKaydetVeBitir();
+                    }
+                }
+            }
+
+            fnfCtx.strokeStyle = (fnfBolum === 2) ? '#ff3333' : '#ff33cc';
+            fnfCtx.lineWidth = 2;
+            for (let x of fnfLaneX) {
+                fnfCtx.beginPath();
+                fnfCtx.arc(x + 15, 290, 18, 0, Math.PI * 2);
+                fnfCtx.stroke();
+            }
+
+            let laneColors = ['#38bdf8', '#00ffcc', '#eab308', '#ef4444'];
+            for (let note of fnfNotes) {
+                fnfCtx.fillStyle = laneColors[note.lane];
+                fnfCtx.fillRect(fnfLaneX[note.lane], note.y, 30, 20);
+            }
+        }
+
         const snakeCanvas = document.getElementById("oyunAlani");
         const snakeCtx = snakeCanvas.getContext("2d");
         const birim = 20;
@@ -1096,18 +2125,27 @@
             } catch (e) {}
         }
 
-        let skorTablosu = JSON.parse(localStorage.getItem("ultimate_snake_skorlar")) || [];
+        function skorTablosuGetirSnake() {
+            try {
+                return JSON.parse(localStorage.getItem(storageKeySnake)) || [];
+            } catch(e) { return []; }
+        }
 
         function skorTablosuGuncelleSnake() {
             const liste = document.getElementById("snake-skor-listesi");
+            if (!liste) return;
             liste.innerHTML = "";
+            let skorTablosu = skorTablosuGetirSnake();
+            
             if (skorTablosu.length === 0) {
-                liste.innerHTML = "<li style='text-align:center; color:#6b7280;'>Henüz kayıt yok!</li>";
-                document.getElementById("en-yuksek-skor").innerText = 0;
+                liste.innerHTML = "<li style='text-align:center; color:#6b7280;'>Bu platformda kayıt yok!</li>";
+                let eYuksek = document.getElementById("en-yuksek-skor");
+                if(eYuksek) eYuksek.innerText = 0;
                 return;
             }
             skorTablosu.sort((a, b) => b.puan - a.puan);
-            document.getElementById("en-yuksek-skor").innerText = skorTablosu[0].puan;
+            let eYuksek = document.getElementById("en-yuksek-skor");
+            if(eYuksek) eYuksek.innerText = skorTablosu[0].puan;
 
             skorTablosu.slice(0, 5).forEach((kayit, index) => {
                 let li = document.createElement("li");
@@ -1136,11 +2174,57 @@
         let yem = { x: 0, y: 0, tip: yemTurleri[0] };
 
         window.addEventListener("keydown", (olay) => {
-            if (!oyunAktif || currentActiveApp !== 'snake') return;
-            if ((olay.key === "ArrowUp" || olay.key === "w") && yon !== "ASAGI") sonrakiYon = "YUKARI";
-            else if ((olay.key === "ArrowDown" || olay.key === "s") && yon !== "YUKARI") sonrakiYon = "ASAGI";
-            else if ((olay.key === "ArrowLeft" || olay.key === "a") && yon !== "SAG") sonrakiYon = "SOL";
-            else if ((olay.key === "ArrowRight" || olay.key === "d") && yon !== "SOL") sonrakiYon = "SAG";
+            if (currentActiveApp === 'fnf') {
+                let kapsayici = document.getElementById('fnf-oyun-kapsayici');
+                if (!kapsayici || kapsayici.style.display === 'none') return;
+                
+                if (fnfState === 'cutscene') {
+                    if (olay.code === 'Space' || olay.code === 'Enter') {
+                        fnfDialogueIndex++;
+                        if (fnfDialogueIndex >= fnfDialogues.length) {
+                            BaslatFnfOynanis();
+                        }
+                    }
+                    olay.preventDefault();
+                    return;
+                }
+                
+                if (olay.key === 'ArrowLeft' || olay.key === 'a') { fnfVur(0); olay.preventDefault(); }
+                if (olay.key === 'ArrowUp' || olay.key === 'w') { fnfVur(1); olay.preventDefault(); }
+                if (olay.key === 'ArrowDown' || olay.key === 's') { fnfVur(2); olay.preventDefault(); }
+                if (olay.key === 'ArrowRight' || olay.key === 'd') { fnfVur(3); olay.preventDefault(); }
+                return;
+            }
+
+            if (currentActiveApp === 'dino') {
+                if (olay.code === 'Space' || olay.code === 'ArrowUp') {
+                    dinoJump();
+                    olay.preventDefault();
+                }
+                return;
+            }
+
+            if (currentActiveApp === 'snake' && oyunAktif) {
+                if ((olay.key === "ArrowUp" || olay.key === "w") && yon !== "ASAGI") { sonrakiYon = "YUKARI"; olay.preventDefault(); }
+                else if ((olay.key === "ArrowDown" || olay.key === "s") && yon !== "YUKARI") { sonrakiYon = "ASAGI"; olay.preventDefault(); }
+                else if ((olay.key === "ArrowLeft" || olay.key === "a") && yon !== "SAG") { sonrakiYon = "SOL"; olay.preventDefault(); }
+                else if ((olay.key === "ArrowRight" || olay.key === "d") && yon !== "SOL") { sonrakiYon = "SAG"; olay.preventDefault(); }
+                return;
+            }
+        });
+
+        document.addEventListener('click', (olay) => {
+            if (currentActiveApp === 'fnf') {
+                let kapsayici = document.getElementById('fnf-oyun-kapsayici');
+                if (kapsayici && kapsayici.style.display !== 'none' && fnfState === 'cutscene') {
+                    fnfDialogueIndex++;
+                    if (fnfDialogueIndex >= fnfDialogues.length) {
+                        BaslatFnfOynanis();
+                    }
+                }
+            } else if (currentActiveApp === 'dino' && dinoCanvas) {
+                dinoJump();
+            }
         });
 
         function yonDegistir(yeniYon) {
@@ -1154,12 +2238,18 @@
         function oyunuBaslatWeb() {
             clearInterval(oyunDongusu);
             
-            renkIndeks = parseInt(document.getElementById("secim-renk").value);
-            mevcutYemIndeks = parseInt(document.getElementById("secim-yem").value);
+            let renkSelect = document.getElementById("secim-renk");
+            let yemSelect = document.getElementById("secim-yem");
+            if(renkSelect) renkIndeks = parseInt(renkSelect.value);
+            if(yemSelect) mevcutYemIndeks = parseInt(yemSelect.value);
 
-            document.getElementById("aktif-renk-adi").innerText = yilanRenkleri[renkIndeks].ad;
-            document.getElementById("snake-menu-alani").style.display = "none";
-            document.getElementById("snake-oyun-alani-kapsayici").style.display = "block";
+            let aktifRenkAdi = document.getElementById("aktif-renk-adi");
+            if(aktifRenkAdi) aktifRenkAdi.innerText = yilanRenkleri[renkIndeks].ad;
+
+            let sMenu = document.getElementById("snake-menu-alani");
+            let sKapsayici = document.getElementById("snake-oyun-alani-kapsayici");
+            if(sMenu) sMenu.style.display = "none";
+            if(sKapsayici) sKapsayici.style.display = "block";
 
             yilan = [
                 { x: 9 * birim, y: 9 * birim },
@@ -1169,15 +2259,17 @@
             yon = "SAG";
             sonrakiYon = "SAG";
             skor = 0;
-            document.getElementById("skor").innerText = skor;
+            let skorElem = document.getElementById("skor");
+            if(skorElem) skorElem.innerText = skor;
             
+            let skorTablosu = skorTablosuGetirSnake();
             let enYuksek = skorTablosu.length > 0 ? skorTablosu[0].puan : 0;
-            document.getElementById("en-yuksek-skor").innerText = enYuksek;
+            let eyElem = document.getElementById("en-yuksek-skor");
+            if(eyElem) eyElem.innerText = enYuksek;
             
             oyunAktif = true;
             rastgeleYemUretVerilenIndeksde(mevcutYemIndeks);
             
-            // FPS kontrolüne uyumlu yılan hızı (Standart 110ms)
             oyunDongusu = setInterval(anaDonguSnake, 110);
         }
 
@@ -1185,8 +2277,10 @@
             oyunAktif = false;
             clearInterval(oyunDongusu);
             skorTablosuGuncelleSnake();
-            document.getElementById("snake-menu-alani").style.display = "block";
-            document.getElementById("snake-oyun-alani-kapsayici").style.display = "none";
+            let sMenu = document.getElementById("snake-menu-alani");
+            let sKapsayici = document.getElementById("snake-oyun-alani-kapsayici");
+            if(sMenu) sMenu.style.display = "block";
+            if(sKapsayici) sKapsayici.style.display = "none";
         }
 
         function rastgeleYemUretVerilenIndeksde(indeks) {
@@ -1197,7 +2291,8 @@
                 y: Math.floor(Math.random() * kareSayisi) * birim,
                 tip: secilenTip
             };
-            document.getElementById("aktif-yem-adi").innerText = yem.tip.ad;
+            let aktifYemAdi = document.getElementById("aktif-yem-adi");
+            if(aktifYemAdi) aktifYemAdi.innerText = yem.tip.ad;
         }
 
         function siradakiYemiUret() {
@@ -1208,7 +2303,8 @@
                 y: Math.floor(Math.random() * kareSayisi) * birim,
                 tip: secilenTip
             };
-            document.getElementById("aktif-yem-adi").innerText = yem.tip.ad;
+            let aktifYemAdi = document.getElementById("aktif-yem-adi");
+            if(aktifYemAdi) aktifYemAdi.innerText = yem.tip.ad;
         }
 
         function oyunGuncelleSnake() {
@@ -1235,23 +2331,29 @@
                     clearInterval(oyunDongusu);
                     sesCal("olum");
                     
-                    let oyuncuIsmi = document.getElementById("oyuncu-adi").value.trim() || "İsimsiz";
+                    let inputIsim = document.getElementById("oyuncu-adi");
+                    let oyuncuIsmi = (inputIsim && inputIsim.value.trim()) ? inputIsim.value.trim() : "İsimsiz";
+                    let skorTablosu = skorTablosuGetirSnake();
                     let normalizeIsim = oyuncuIsmi.toLowerCase();
                     let mevcutKayit = skorTablosu.find(k => k.isim.trim().toLowerCase() === normalizeIsim);
                     
                     if (mevcutKayit) {
                         if (skor > mevcutKayit.puan) {
-                            mevcutKayit.puan = skor;
+                            mevcurKayit.puan = skor;
                             mevcutKayit.isim = oyuncuIsmi;
                         }
                     } else {
                         skorTablosu.push({ isim: oyuncuIsmi, puan: skor });
                     }
 
-                    localStorage.setItem("ultimate_snake_skorlar", JSON.stringify(skorTablosu));
+                    try {
+                        localStorage.setItem(storageKeySnake, JSON.stringify(skorTablosu));
+                    } catch(e) {}
+                    
+                    skorTablosuGuncelleSnake();
 
                     setTimeout(() => {
-                        alert("FATAL ERROR: Kuyruğunu ısırdın!\nOyuncu: " + oyuncuIsmi + "\nSkorun: " + skor);
+                        alert("FATAL ERROR: Kuyruğunu ısırdın!\nPlatform: " + aktifPlatform + "\nSkorun: " + skor);
                         menuyeDonSnake();
                     }, 100);
                     return;
@@ -1260,7 +2362,8 @@
 
             if (kafaX === yem.x && kafaY === yem.y) {
                 skor += yem.tip.puan;
-                document.getElementById("skor").innerText = skor;
+                let skorElem = document.getElementById("skor");
+                if(skorElem) skorElem.innerText = skor;
                 sesCal("yem");
                 siradakiYemiUret();
             } else {
@@ -1271,6 +2374,7 @@
         }
 
         function cizimYapSnake() {
+            if (!snakeCtx) return;
             snakeCtx.fillStyle = "#111827";
             snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
 
@@ -1301,6 +2405,10 @@
         function anaDonguSnake() {
             if (!oyunAktif) return;
             oyunGuncelleSnake();
+            c_zimYapSnake();
+        }
+        
+        function c_zimYapSnake() {
             cizimYapSnake();
         }
     </script>
